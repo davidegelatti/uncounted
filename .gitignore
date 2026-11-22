@@ -20,3 +20,6 @@ scripts/.cache
 *.log
 .wrangler/
 
+
+# Documenti interni di lavoro (handoff, progetto UX, note, promemoria): restano solo sul Mac
+interno/
