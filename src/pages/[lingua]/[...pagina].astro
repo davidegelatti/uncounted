@@ -1,0 +1,45 @@
+---
+// Una sola rotta genera tutte le pagine nelle due lingue. I contenuti stanno in src/content/<lingua>/<pagina>.mdx.
+import Base from '../../layouts/Base.astro';
+import Strumento from '../../components/Strumento.astro';
+import { LINGUE, traduttore, type Lingua } from '../../i18n/indice';
+import { PAGINE, PERCORSI, type Pagina } from '../../i18n/percorsi';
+
+export function getStaticPaths() {
+  return LINGUE.flatMap((lingua) => PAGINE.map((chiave) => ({ params: { lingua, pagina: PERCORSI[lingua][chiave] || undefined }, props: { lingua, chiave } })));
+}
+interface Props {
+  lingua: Lingua;
+  chiave: Pagina;
+}
+type Modulo = { default: any; frontmatter: { sezioni?: { id: string; titolo: string }[]; indice?: boolean; scheletro?: boolean } };
+const contenuti = import.meta.glob<Modulo>('../../content/*/*.mdx', { eager: true });
+const { lingua, chiave } = Astro.props;
+const t = traduttore(lingua);
+const modulo = contenuti[`../../content/${lingua}/${chiave}.mdx`];
+const Contenuto = modulo?.default;
+const fm = modulo?.frontmatter ?? {};
+---
+
+<Base lingua={lingua} pagina={chiave}>
+  {
+    chiave === 'strumento' ? (
+      <Strumento lingua={lingua} />
+    ) : fm.indice ? (
+      <div class="largo doc">
+        <nav class="indice" aria-label={t('nav.inPagina')}>
+          <ol>{(fm.sezioni ?? []).map((s) => <li><a href={`#${s.id}`}>{s.titolo}</a></li>)}</ol>
+        </nav>
+        <article>
+          {fm.scheletro && <p class="fascia ambra">{t(lingua === 'en' ? 'scheletro.daTradurre' : 'scheletro.avviso')}</p>}
+          <Contenuto />
+        </article>
+      </div>
+    ) : (
+      <article class="largo pagina">
+        {fm.scheletro && <p class="fascia ambra sopra cornice">{t(lingua === 'en' ? 'scheletro.daTradurre' : 'scheletro.avviso')}</p>}
+        <Contenuto />
+      </article>
+    )
+  }
+</Base>

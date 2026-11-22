@@ -1,0 +1,27 @@
+---
+// «Cosa risolve», scheda 2: 100 visite come trattini (69 contate, 31 senza consenso) e, sotto, gli ordini.
+// Chi non accetta converte meno: 9 ordini tra 69 visite contate, circa 2 tra 31 senza consenso (0,4 volte; 1,6 esatti).
+// Solo segni nell'SVG: le etichette sono testo HTML sotto la figura, leggibile a ogni larghezza.
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+const PASSO = 4.4;
+const x = (i: number): number => 2 + i * PASSO;
+const ORDINI_VISTI = [4, 11, 19, 27, 34, 42, 50, 57, 64];
+const ORDINI_PERSI = [77, 91];
+const id = `visite-ordini-${lingua}`;
+---
+
+<svg class="fig-registro fig-risolve" viewBox="0 0 440 128" role="img" aria-labelledby={id}>
+  <title id={id}>{t('risolve.bAria')}</title>
+  {Array.from({ length: 100 }, (_, i) => (i < 69
+    ? <rect class="contata" x={x(i) - 1.2} y="6" width="2.4" height="72" />
+    : <line class="persa-linea" x1={x(i)} x2={x(i)} y1="7" y2="77" />))}
+  <line class="riga" x1="0" x2="440" y1="90" y2="90" />
+  {ORDINI_VISTI.map((i) => <rect class="ordine" x={x(i) - 6} y="102" width="12" height="12" />)}
+  {ORDINI_PERSI.map((i) => <rect class="ordine-perso" x={x(i) - 6} y="102" width="12" height="12" />)}
+</svg>
+<ul class="legenda legenda-risolve" aria-hidden="true">
+  <li><i class="seg-contato"></i> {t('risolve.bLegContato')}</li>
+  <li><i class="seg-perso"></i> {t('risolve.bLegPerso')}</li>
+</ul>

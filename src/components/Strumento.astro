@@ -1,0 +1,18 @@
+---
+// Contenitore dello strumento: l'interfaccia è costruita nel browser da src/strumento/avvio.ts.
+import sito from '../../sito.config.json';
+import { traduttore, type Lingua } from '../i18n/indice';
+interface Props {
+  lingua: Lingua;
+}
+const { lingua } = Astro.props;
+const t = traduttore(lingua);
+---
+
+<h1 class="nascosto-vis">{t('pagina.strumento.titolo')}</h1>
+<div id="strumento" data-lingua={lingua} data-sito={sito.nomeProgetto} data-indirizzo={new URL(sito.url).host}>
+  <noscript><p class="avvio">{t('comune.noscript')}</p></noscript>
+</div>
+<script>
+  import '../strumento/avvio.ts';
+</script>

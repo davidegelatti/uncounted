@@ -1,0 +1,82 @@
+---
+---
+
+# Come è stato fatto
+
+Uncounted è stato progettato e scritto con Claude, il modello di intelligenza artificiale di Anthropic, sotto la guida e con le decisioni di una persona. Questa pagina racconta chi ha fatto cosa e cosa resta da verificare.
+
+<section id="why">
+
+## Perché esiste
+
+Con il banner dei cookie, GA4 registra solo chi accetta. Chi rifiuta o ignora il banner non compare nei report, e chi accetta di solito non è un campione qualsiasi: torna più spesso e compra di più. I numeri di GA4 sono quindi più bassi del traffico reale, ma non di una quota semplice da calcolare.
+
+La modellazione di Google colma il vuoto solo a certe condizioni, e molte proprietà non le rispettano. Le stime fatte a mano, invece, dividono di solito per il tasso di accettazione e restituiscono un numero solo, senza dire quanto sia incerto. Uncounted nasce per dare una stima con il suo intervallo, ipotesi dichiarate e nessun dato che lasci il browser.
+
+</section>
+
+<section id="who-did-what">
+
+## Chi ha fatto cosa
+
+**Davide Gelatti** (Digital Analyst) ha avuto l’idea, scritto i requisiti, scelto tra le alternative proposte e approvato ogni fase prima di passare alla successiva.
+
+**Claude**, in Claude Code:
+
+- **Claude Fable 5.2** ha sviluppato il metodo statistico, il codice del motore di calcolo, la validazione e il progetto dell’interfaccia;
+- **Claude Opus 5.5** ha curato il sistema visivo, i contenuti delle pagine, la traduzione inglese e la preparazione alla pubblicazione.
+
+Il lavoro è andato per fasi. Ogni fase si chiudeva con un documento o un prototipo, e la fase successiva partiva solo dopo l’approvazione esplicita dell’autore, spesso con correzioni. Per esempio: il metodo è stato scritto e discusso per intero in un documento prima di scrivere il codice; il sistema visivo è stato scelto tra tre direzioni diverse, mostrate come prototipi.
+
+</section>
+
+<section id="how-validated">
+
+## Come è stato verificato
+
+Il metodo non è stato provato su dati reali, perché nei dati reali il traffico di chi non accetta non si può conoscere. È stato provato su **dati sintetici**: un generatore simula ogni visitatore, produce un export come quello di GA4 e conserva la risposta giusta. Ogni scenario è ripetuto 500 volte, e si conta quante volte l’intervallo dello stimatore contiene il valore vero.
+
+Alcuni scenari rispettano le ipotesi dello stimatore; altri le violano apposta, per misurare quanto costa un’ipotesi sbagliata. Un test automatico controlla poi che il motore dia gli stessi numeri, cifra per cifra, a ogni modifica del codice.
+
+I risultati completi, compresi quelli sfavorevoli, sono nella pagina [Validazione](/it/validazione/).
+
+</section>
+
+<section id="decisions">
+
+## Le decisioni dell’autore
+
+Alcune scelte hanno cambiato il metodo o l’interfaccia. Sono state proposte con i loro pro e contro e decise dall’autore:
+
+- **Ordini reali senza ripesatura.** Il primo metodo usava gli ordini del gestionale anche per correggere a ritroso le altre ipotesi. Sui dati sintetici, con un’ipotesi sbagliata, questo spostava la stima delle sessioni fino al 12%. Ora gli ordini reali correggono solo ordini ed entrate: la stima è più robusta, al prezzo di rinunciare a quel poco che direbbero sulle sessioni.
+- **La domanda sul pubblico.** Una parte degli ordini che mancano in GA4 non dipende dal consenso, ma da ad blocker e browser che bloccano Google Analytics. Invece di ignorarla, lo stimatore chiede che pubblico ha il sito e dichiara la quota che usa.
+- **Nessun valore preimpostato all’insaputa dell’utente.** Ciò che l’utente può sapere parte vuoto. Ciò che nessuno può sapere ha un valore iniziale, segnato come «Predefinita» finché non lo confermi o lo cambi.
+- **Nessun dato fuori dal browser.** È un requisito dell’autore fin dall’inizio: niente server, niente analytics, niente risorse di terze parti, anche a costo di rinunciare a funzioni comode come il salvataggio online.
+
+</section>
+
+<section id="limits">
+
+## Limiti di questo modo di lavorare
+
+- Il codice e i testi sono stati scritti da un modello. L’autore ha rivisto e approvato ogni fase; la correttezza del calcolo è affidata soprattutto alla validazione e ai test automatici.
+- La validazione dimostra che il metodo mantiene ciò che promette **se le ipotesi sono ragionevoli**. Non dimostra che le ipotesi predefinite valgano per un sito in particolare.
+- I valori sugli ad blocker vengono da poche misure pubbliche, alcune vecchie di anni. Sono dichiarati come ipotesi, con un margine largo.
+- Le istruzioni sulle piattaforme dei banner si basano sulle loro guide ufficiali, dove è stato possibile consultarle; i menu cambiano spesso.
+- Le diciture di GA4 sono quelle della documentazione di Google. L’interfaccia può differire leggermente.
+
+Se trovi un errore, scrivilo: vedi [Privacy → Contatti](/it/privacy/#contact).
+
+</section>
+
+<section id="code">
+
+## Il codice
+
+Il codice è pubblico e consultabile nel <a href="https://github.com/davidegelatti/uncounted" target="_blank" rel="noopener">repository su GitHub<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (si apre in una nuova scheda)</span></a>, insieme al generatore dei dati sintetici per rifare la validazione da zero.
+
+La <a href="https://github.com/davidegelatti/uncounted/blob/main/LICENSE.md" target="_blank" rel="noopener">licenza<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (si apre in una nuova scheda)</span></a> è semplice: puoi leggerlo ed eseguirlo per verificarlo; non puoi riutilizzarlo.
+
+Google Analytics è un marchio di Google LLC. Uncounted è un progetto indipendente, non affiliato a Google.
+
+</section>

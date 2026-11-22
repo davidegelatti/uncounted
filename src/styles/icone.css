@@ -1,0 +1,46 @@
+/* Generato da scripts/icone.mjs: non modificare a mano. Icone Lucide (ISC), file in src/icone/. */
+.ic::before, .ic-prima::before {
+  content: '';
+  display: inline-block;
+  flex: none;
+  width: var(--ic-dim, 1em);
+  height: var(--ic-dim, 1em);
+  background-color: currentColor;
+  -webkit-mask: var(--ic) center / contain no-repeat;
+  mask: var(--ic) center / contain no-repeat;
+  vertical-align: -0.14em;
+}
+.ic-prima::before { margin-right: 0.45em; }
+.ic-arrow-down { --ic: url('../icone/arrow-down.svg'); }
+.ic-calendar-days { --ic: url('../icone/calendar-days.svg'); }
+.ic-chart-no-axes-column { --ic: url('../icone/chart-no-axes-column.svg'); }
+.ic-circle-check { --ic: url('../icone/circle-check.svg'); }
+.ic-circle-dashed { --ic: url('../icone/circle-dashed.svg'); }
+.ic-circle-dot { --ic: url('../icone/circle-dot.svg'); }
+.ic-circle-help { --ic: url('../icone/circle-help.svg'); }
+.ic-clock { --ic: url('../icone/clock.svg'); }
+.ic-cookie { --ic: url('../icone/cookie.svg'); }
+.ic-crosshair { --ic: url('../icone/crosshair.svg'); }
+.ic-equal-approximately { --ic: url('../icone/equal-approximately.svg'); }
+.ic-eye { --ic: url('../icone/eye.svg'); }
+.ic-eye-off { --ic: url('../icone/eye-off.svg'); }
+.ic-file-up { --ic: url('../icone/file-up.svg'); }
+.ic-flask-conical { --ic: url('../icone/flask-conical.svg'); }
+.ic-info { --ic: url('../icone/info.svg'); }
+.ic-layers { --ic: url('../icone/layers.svg'); }
+.ic-lightbulb { --ic: url('../icone/lightbulb.svg'); }
+.ic-link { --ic: url('../icone/link.svg'); }
+.ic-lock { --ic: url('../icone/lock.svg'); }
+.ic-monitor { --ic: url('../icone/monitor.svg'); }
+.ic-moon { --ic: url('../icone/moon.svg'); }
+.ic-octagon-x { --ic: url('../icone/octagon-x.svg'); }
+.ic-percent { --ic: url('../icone/percent.svg'); }
+.ic-printer { --ic: url('../icone/printer.svg'); }
+.ic-receipt { --ic: url('../icone/receipt.svg'); }
+.ic-scale { --ic: url('../icone/scale.svg'); }
+.ic-sheet { --ic: url('../icone/sheet.svg'); }
+.ic-shield-check { --ic: url('../icone/shield-check.svg'); }
+.ic-sliders-horizontal { --ic: url('../icone/sliders-horizontal.svg'); }
+.ic-sun { --ic: url('../icone/sun.svg'); }
+.ic-triangle-alert { --ic: url('../icone/triangle-alert.svg'); }
+.ic-users { --ic: url('../icone/users.svg'); }

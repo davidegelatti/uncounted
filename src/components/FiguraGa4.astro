@@ -1,0 +1,70 @@
+---
+// Schermata di GA4 nella Guida, ottimizzata (WebP a più larghezze + PNG di riserva) e annotata con un SVG
+// sovrapposto (numeri dei passi e riquadri), senza stili in linea. Cerca src/assets/guida/<prefisso>-<nome>-<lingua>.png
+// (prefisso «ga4» per le schermate di GA4, «stimatore» per quelle generate da scripts/schermate-guida.mjs):
+// se il file non c'è (per ora l'inglese) non mostra nulla, così basta aggiungere il file per farla comparire.
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { Lingua } from '../i18n/indice';
+
+interface Annotazione {
+  /** Numero del passo nel testo (facoltativo: senza numero si evidenzia solo il riquadro) */
+  n?: number;
+  /** Riquadro da evidenziare, in pixel dell'immagine originale */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /** Lato del riquadro su cui si appoggia il numero */
+  lato?: 'sinistra' | 'destra';
+}
+interface Props {
+  nome: string;
+  lingua: Lingua;
+  alt: string;
+  didascalia: string;
+  annotazioni?: Annotazione[];
+  /** «alta»: schermata verticale, affiancabile a un'altra; «larga»: a tutta larghezza */
+  forma?: 'alta' | 'larga' | 'media' | 'stretta';
+  apri: string;
+  prefisso?: string;
+}
+const { nome, lingua, alt, didascalia, annotazioni = [], forma = 'larga', apri, prefisso = 'ga4' } = Astro.props;
+const immagini = import.meta.glob<{ default: ImageMetadata }>('../assets/guida/*.png', { eager: true });
+const file = immagini[`../assets/guida/${prefisso}-${nome}-${lingua}.png`]?.default;
+let webp: Awaited<ReturnType<typeof getImage>> | undefined;
+let png: Awaited<ReturnType<typeof getImage>> | undefined;
+if (file) {
+  const larghezze = [Math.round(file.width / 2), file.width].concat(file.width > 1600 ? [Math.round(file.width * 0.34)] : []).sort((a, b) => a - b);
+  webp = await getImage({ src: file, format: 'webp', widths: larghezze, quality: 80 });
+  png = await getImage({ src: file, format: 'png', width: Math.min(file.width, 1200) });
+}
+const r = 30; // raggio del numero, in pixel dell'immagine
+---
+
+{file && webp && png && (
+  <figure class:list={['figura-ga4', `figura-${forma}`]}>
+    <div class="figura-ga4-quadro">
+      <picture>
+        <source type="image/webp" srcset={webp.srcSet.attribute} sizes={forma === 'larga' ? '(max-width: 860px) 100vw, 48rem' : forma === 'stretta' ? '(max-width: 860px) 80vw, 16rem' : '(max-width: 860px) 100vw, 24rem'} />
+        <img src={png.src} width={file.width} height={file.height} alt={alt} loading="lazy" decoding="async" />
+      </picture>
+      {annotazioni.length > 0 && (
+        <svg class="annotazioni" viewBox={`0 0 ${file.width} ${file.height}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          {annotazioni.map((a) => {
+            const cx = a.lato === 'destra' ? a.x + a.w : a.x;
+            const cy = a.y;
+            return (
+              <g>
+                <rect class="annota-riquadro" x={a.x} y={a.y} width={a.w} height={a.h} rx="10" />
+                {a.n !== undefined && <circle class="annota-cerchio" cx={cx} cy={cy} r={r} />}
+                {a.n !== undefined && <text class="annota-numero" x={cx} y={cy + 11} text-anchor="middle">{a.n}</text>}
+              </g>
+            );
+          })}
+        </svg>
+      )}
+    </div>
+    <figcaption>{didascalia} <a href={file.src}>{apri}</a></figcaption>
+  </figure>
+)}

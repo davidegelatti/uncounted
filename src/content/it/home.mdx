@@ -1,0 +1,114 @@
+---
+---
+import Matrice from '../../components/schemi/Matrice.astro';
+import VisiteOrdini from '../../components/schemi/VisiteOrdini.astro';
+import VisitatoriVisite from '../../components/schemi/VisitatoriVisite.astro';
+import DividereNonBasta from '../../components/schemi/DividereNonBasta.astro';
+import Testo from '../../components/Testo.astro';
+import Vetrina from '../../components/Vetrina.astro';
+import Gradiente from '../../components/Gradiente.astro';
+
+<section id="promise" class="home-eroe">
+  <div class="eroe-testo">
+    <div class="eroe-corpo">
+      <p class="sopratitolo">Stimatore per Google Analytics 4</p>
+      <h1>La parte di traffico che GA4 non conta.</h1>
+      <p class="sottotitolo">Chi rifiuta o ignora il banner dei cookie non compare nei report. Carica un export, indica il tuo tasso di accettazione e ottieni una stima dei totali, con il margine di incertezza scritto accanto.</p>
+      <p class="azioni"><a class="btn primo" href="/it/stimatore/">Inizia</a><a class="btn" href="/it/stimatore/#tour">Guarda un esempio</a></p>
+      <ul class="prove">
+      <li><a href="/it/privacy/#verify">Nessun dato lascia il browser</a></li>
+      <li><a href="/it/metodo/">Metodo pubblico e validato</a></li>
+      </ul>
+    </div>
+    <a class="scorri-giu" href="#how-it-works"><span class="cerchio" aria-hidden="true"></span>Scorri per vedere come funziona</a>
+  </div>
+  <div class="eroe-pannello inverso">
+    <Gradiente />
+    <figure class="home-figura">
+      <Matrice lingua="it" />
+    </figure>
+  </div>
+</section>
+
+<section id="how-it-works" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta">Come funziona</p><div><h2>Tre passi, nessuna installazione</h2><p class="lead">Niente account e niente da installare: tutto succede in questa pagina del browser, e il file non esce dal tuo computer.</p></div></div>
+  <ol class="passi-home">
+      <li>
+        <div class="passo-testa"><span class="passo-num"></span><span class="passo-tempo ic-prima ic-clock">≈ 3 min la prima volta</span></div>
+        <h3 class="ic-prima ic-file-up">Carica l’export</h3>
+        <p>Un CSV da un’esplorazione GA4 in formato libero: sessioni, eventi chiave e transazioni per giorno e canale. <a href="/it/guida/#create-exploration">Come crearlo</a></p>
+        <div class="mini mini-file" aria-hidden="true"><span class="ic ic-sheet"></span><span class="mini-nome">esempio-export-ga4.csv</span><span class="mini-meta">280 righe · 8 canali</span><span class="ic ic-circle-check mini-ok"></span></div>
+      </li>
+      <li>
+        <div class="passo-testa"><span class="passo-num"></span><span class="passo-tempo ic-prima ic-clock">≈ 1 min</span></div>
+        <h3 class="ic-prima ic-circle-help">Rispondi a poche domande</h3>
+        <p>Come è installato il Consent Mode e qual è il tasso di accettazione del tuo banner. «Non lo so» è una risposta ammessa: allarga l’intervallo.</p>
+        <div class="mini mini-domanda" aria-hidden="true"><span class="mini-q">Come lo calcola la tua CMP?</span><span class="mini-opz scelta-ok">Per visitatore</span><span class="mini-opz">Per banner mostrato</span><span class="mini-opz">Non lo so</span></div>
+      </li>
+      <li>
+        <div class="passo-testa"><span class="passo-num"></span><span class="passo-tempo ic-prima ic-clock">pochi secondi</span></div>
+        <h3 class="ic-prima ic-chart-no-axes-column">Leggi la stima e affinala</h3>
+        <p>Un valore centrale con il suo intervallo. Poi puoi cambiare le ipotesi, aggiungere gli ordini reali del gestionale e vedere cosa cambia.</p>
+        <div class="mini mini-dato" aria-hidden="true"><span class="mini-q">GA4 ti mostra circa <b>65%</b></span><span class="mini-barra"><i class="b-oss"></i><i class="b-80"></i><i class="b-med"></i></span><span class="mini-meta">probabilmente tra 54% e 75%</span></div>
+      </li>
+  </ol>
+  <p class="azioni centro-azioni"><a class="btn primo" href="/it/stimatore/">Inizia con il tuo export</a><a class="btn" href="/it/stimatore/#tour">Prova con dati di esempio</a></p>
+</section>
+
+<section id="what-you-get" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta">Cosa ottieni</p><div><h2>Un numero, quanto fidarsi e da dove viene</h2><p class="lead">Sono i veri risultati dello stimatore, calcolati sui dati di esempio: le stesse schede e gli stessi grafici che vedrai con il tuo export.</p></div></div>
+  <Vetrina lingua="it" />
+  <p class="azioni centro-azioni"><a class="btn primo" href="/it/stimatore/#tour">Prova con i dati di esempio</a><a class="btn" href="/it/guida/#create-exploration">Come preparare l’export</a></p>
+</section>
+
+<section id="problem" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta"><Testo lingua="it" k="risolve.etichetta" /></p><div><h2><Testo lingua="it" k="risolve.titolo" /></h2><p class="lead"><Testo lingua="it" k="risolve.lead" /></p></div></div>
+  <ol class="schede-risolve">
+    <li>
+      <div class="passo-testa"><span class="passo-num"></span></div>
+      <h3><Testo lingua="it" k="risolve.aTitolo" /></h3>
+      <VisitatoriVisite lingua="it" />
+      <p class="evidenza"><Testo lingua="it" k="risolve.aEvidenza" /></p>
+      <p><Testo lingua="it" k="risolve.aRiga" /></p>
+    </li>
+    <li>
+      <div class="passo-testa"><span class="passo-num"></span></div>
+      <h3><Testo lingua="it" k="risolve.bTitolo" /></h3>
+      <VisiteOrdini lingua="it" />
+      <p class="evidenza"><Testo lingua="it" k="risolve.bEvidenza" /></p>
+      <p><Testo lingua="it" k="risolve.bRiga" /></p>
+    </li>
+  </ol>
+  <div class="conclusione-risolve">
+    <p class="vetrina-nota"><Testo lingua="it" k="risolve.cEtichetta" /></p>
+    <h3><Testo lingua="it" k="risolve.cTitolo" /></h3>
+    <DividereNonBasta lingua="it" />
+    <p class="evidenza"><Testo lingua="it" k="risolve.cFrase" /></p>
+  </div>
+  <p class="azioni centro-azioni"><a class="btn" href="/it/metodo/">Scopri il metodo</a></p>
+</section>
+
+<section id="what-it-is-not" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta">Cosa non è</p><div><h2>Cosa non fa, detto prima</h2></div></div>
+  <ul class="schede-non">
+    <li><span class="ic-grande ic ic-scale" aria-hidden="true"></span><h3>Non è una misura</h3><p>È una stima che dipende da ipotesi dichiarate: cambiandole, cambia. Per questo ogni numero ha accanto il suo intervallo.</p></li>
+    <li><span class="ic-grande ic ic-cookie" aria-hidden="true"></span><h3>Riguarda solo il consenso</h3><p>Il traffico che GA4 perde per ad blocker o errori di tracciamento non è compreso.</p></li>
+    <li><span class="ic-grande ic ic-layers" aria-hidden="true"></span><h3>Non serve se GA4 sta già stimando</h3><p>Con il Consent Mode Advanced e la modellazione di Google attiva, lo stimatore se ne accorge e si ferma, per non contare due volte.</p></li>
+  </ul>
+  <p class="dopo-schede"><a href="/it/metodo/">Come funziona il metodo</a> · <a href="/it/validazione/">Come è stato verificato</a></p>
+</section>
+
+<section id="who" class="home-sezione">
+  <div class="meta"><p class="etichetta">L’autore</p></div>
+  <div class="contenuto">
+    <h2>Chi l’ha fatto</h2>
+    <p>Uncounted è un progetto di <a href="https://davidegelatti.com" target="_blank" rel="noopener">Davide Gelatti, Digital Analyst<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (si apre in una nuova scheda)</span></a>. È stato sviluppato con Claude, il modello di intelligenza artificiale di Anthropic, a fasi e con ogni decisione approvata dall’autore. <a href="/it/come-e-stato-fatto/">Come è stato fatto</a></p>
+  </div>
+</section>
+
+<section id="start" class="fascia-finale inverso">
+  <Gradiente speculare />
+  <h2>Quanto traffico non vede il tuo GA4? Scoprilo in cinque minuti.</h2>
+  <p class="lead">Il file resta nel tuo browser. Se non hai un export sotto mano, parti dai dati di esempio.</p>
+  <p class="azioni centro-azioni"><a class="btn primo" href="/it/stimatore/">Inizia con il tuo export</a><a class="btn" href="/it/stimatore/#tour">Prova con dati di esempio</a></p>
+</section>

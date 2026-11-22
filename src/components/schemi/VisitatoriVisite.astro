@@ -1,0 +1,25 @@
+---
+// «Cosa risolve», scheda 1: dieci visitatori (cerchi) e sotto ciascuno le sue visite (pallini).
+// 6 accettano e fanno 3 visite (pieni, contati), 4 non accettano e ne fanno 2 (cobalto tratteggiato, non visti): 18 su 26.
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+const PASSO = 44;
+const visitatori = Array.from({ length: 10 }, (_, i) => ({ cx: 22 + i * PASSO, accetta: i < 6 }));
+const id = `visitatori-visite-${lingua}`;
+---
+
+<svg class="fig-registro fig-risolve" viewBox="0 0 440 128" role="img" aria-labelledby={id}>
+  <title id={id}>{t('risolve.aAria')}</title>
+  <line class="riga" x1="0" x2="440" y1="38" y2="38" />
+  {visitatori.map((v) => (
+    <g>
+      <circle class={v.accetta ? 'contata' : 'persa'} cx={v.cx} cy="18" r="12" />
+      {Array.from({ length: v.accetta ? 3 : 2 }, (_, k) => <circle class={v.accetta ? 'contata' : 'persa'} cx={v.cx} cy={58 + k * 24} r="7" />)}
+    </g>
+  ))}
+</svg>
+<ul class="legenda legenda-risolve" aria-hidden="true">
+  <li><i class="seg-contato"></i> {t('risolve.aLegContato')}</li>
+  <li><i class="seg-perso"></i> {t('risolve.aLegPerso')}</li>
+</ul>

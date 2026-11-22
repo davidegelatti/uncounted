@@ -1,0 +1,102 @@
+---
+indice: true
+sezioni:
+  - { id: how, titolo: 'How an estimate is checked' }
+  - { id: calibration, titolo: 'Calibration: is “8 times out of 10” true?' }
+  - { id: robustness, titolo: 'Robustness: what a wrong assumption costs' }
+  - { id: ad-blockers, titolo: 'Ad blockers and real orders' }
+  - { id: reading, titolo: 'What to take away' }
+  - { id: reproduce, titolo: 'How to rerun the tests' }
+---
+import Tabella from '../../components/TabellaValidazione.astro';
+
+# Validation
+
+An estimate of traffic you can’t see can’t be compared with reality: reality, after all, is what you can’t see.
+What you can do is build a fake site where everything is known, hide the part without consent from the estimator and check whether it finds it.
+
+<section id="how">
+
+## How an estimate is checked
+
+A generator simulates **every single visitor**: they arrive from a channel, accept, decline or ignore the banner, come back a certain number of times, buy or don’t. Two things come out of it:
+
+- an export identical to GA4’s, with only the visits of those who accepted;
+- the **right answer**: the total traffic, which the estimator doesn’t see.
+
+The generator works per visitor and the estimator works on totals, with different formulas: if they used the same ones, the test would be circular.
+Each scenario is repeated 500 times with different data. What is measured is **how often the true value falls within the stated range**.
+
+</section>
+
+<section id="calibration">
+
+## Calibration: is “8 times out of 10” true?
+
+In these tests the estimator’s assumptions are right on average: the true behaviors are drawn from the same ranges the estimator assumes. Here the coverage **must** hold: about 80 times out of 100 for the “likely” range, 95 for “almost certainly”.
+With 500 runs, the margin of the measurement itself is about ±4 points on the first number and ±2 on the second.
+
+<Tabella lingua="en" scenari={['A1', 'A2', 'A3', 'A4', 'A5', 'A6']} />
+
+It holds in every scenario, including channels with very few conversions and extreme consent rates. The very small site (2,000 sessions) is borderline on revenue and, for single channels, on sessions.
+
+<Tabella lingua="en" tipo="errore" scenari={['A1', 'A2', 'A3', 'A4', 'A5', 'A6']} />
+
+</section>
+
+<section id="robustness">
+
+## Robustness: what a wrong assumption costs
+
+Here one assumption is **deliberately wrong**. Coverage drops, and that’s unavoidable: no range protects against a false assumption. The point is to know by how much.
+
+<Tabella lingua="en" scenari={['B6', 'B7', 'B8a', 'B8b', 'B9', 'B10a', 'B10b', 'B11a', 'B11b', 'B12a', 'B12b', 'B14', 'B16a', 'B16d', 'B16b', 'B16c']} />
+
+<Tabella lingua="en" tipo="errore" scenari={['B6', 'B7', 'B8a', 'B8b', 'B9', 'B10a', 'B10b', 'B11a', 'B11b', 'B12a', 'B12b', 'B14', 'B16a', 'B16d', 'B16b', 'B16c']} />
+
+What these rows say:
+
+- **Wrong “how well they convert”** (1.0 or 0.15 instead of 0.4): sessions stay correct, transactions are off by 13–20% and the range contains the true value about one time in three. **With real orders the error disappears.**
+- **Consent very different across channels**: totals hold, but the session range **for a single channel** contains the true value only 30 times out of 100.
+- **Rate declared wrongly**: a “per banner” rate declared “per visitor” inflates sessions by 19%; a rate that excludes visitors who ignore the banner, declared complete, reduces them by 12%. Declared correctly, the estimate is correct and cautious again.
+- **Consent differs between mobile and desktop**: with differences like those tested (50% consent on mobile and 75% on desktop, one and a half times the visits on desktop), with the overall rate alone sessions come out about 4% too high, even with the rate declared precise, but coverage changes little (76–77 out of 100 instead of 79); with bigger differences the error grows. With rates by device the error disappears; with a similar number of visits across devices there is no error even without them.
+- **Undeclared banner change** and **irregular key events**: no harm to the totals.
+
+</section>
+
+<section id="ad-blockers">
+
+## Ad blockers and real orders
+
+With real orders, the result depends on the share of orders GA4 misses for reasons other than consent, that is, on the audience type you choose.
+
+<Tabella lingua="en" scenari={['B13', 'B13b', 'B15a', 'B15b', 'B15c']} />
+
+<Tabella lingua="en" tipo="errore" scenari={['B13', 'B13b', 'B15a', 'B15b', 'B15c']} />
+
+- **True share 20%, answer “mixed / I don’t know”**: the true value always stays within the “almost certainly” range, but the central estimate of transactions is 14% too high.
+- **True share 20%, wrong answer “consumer”**: the estimate is 16% too high and the true value falls outside the range two times out of three. The audience answer matters.
+- **Ad blockers that decline more often and partly hide the banner**: with real orders, transactions stay correct. **Sessions** come out slightly below actual traffic (by 2% with 12% of visitors blocking GA, by 9% with 35%): the estimator doesn’t estimate visitors GA4 wouldn’t see even with consent.
+
+</section>
+
+<section id="reading">
+
+## What to take away
+
+1. When the assumptions are reasonable, the ranges keep their promise.
+2. **Total sessions** are the most robust estimate; they depend on the consent rate and how it’s measured.
+3. **Orders and revenue** depend on a weak assumption (“how well they convert”): real orders replace it, but bring in the audience question.
+4. The **channel breakdown** should be read as a pointer, not a measurement.
+
+</section>
+
+<section id="reproduce">
+
+## How to rerun the tests
+
+The generator, scenarios and results are in the publicly available source code, in the <a href="https://github.com/davidegelatti/uncounted" target="_blank" rel="noopener">GitHub repository<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (opens in a new tab)</span></a>. To rerun the tests, download the repository, install the dependencies with `npm ci` and run `npm run validazione`: it reruns everything from scratch (about half an hour) and regenerates both the tables on this page and the `VALIDAZIONE.md` file. An automated test also checks that the calculation engine always returns the same numbers, digit for digit, for the same data and assumptions.
+
+</section>
+
+<p><a class="btn primo" href="/en/estimator/">Start</a></p>

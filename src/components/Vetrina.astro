@@ -1,0 +1,41 @@
+---
+// «Cosa ottieni»: quattro voci a sinistra, a destra il vero componente dello strumento per la voce attiva.
+// Senza JavaScript, e su schermi stretti, voci e componenti si leggono in sequenza; su schermi larghi
+// src/home/vetrina-attiva.ts li trasforma in un elenco a scelta singola (un pannello alla volta).
+import { esc, traduttore, type Lingua } from '../i18n/indice';
+import { vetrina } from '../home/vetrina';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+const v = vetrina(lingua);
+const fine = v.csv.indexOf('');
+const righe = [...v.csv.slice(0, 4), t('vetrina.omesse', { n: fine - 4 }), ...v.csv.slice(fine + 1, fine + 6)];
+const csv = `<div class="csv-anteprima"><h4 class="ic-prima ic-sheet">${t('vetrina.csvTitolo')}</h4><pre tabindex="0" aria-label="${esc(t('vetrina.csvTitolo'))}">${righe.map(esc).join('\n')}</pre></div>
+  <ul class="uscite"><li class="ic-prima ic-sheet">CSV</li><li class="ic-prima ic-printer">${t('vetrina.pdf')}</li><li class="ic-prima ic-link">${t('vetrina.link')}</li></ul>
+  <p class="nota">${t('esporta.nota')}</p>`;
+const voci = [
+  { titolo: t('vetrina.v1Titolo'), frase: t('vetrina.v1'), html: v.eroe },
+  { titolo: t('vetrina.v2Titolo'), frase: t('vetrina.v2'), html: v.canali },
+  { titolo: t('vetrina.v3Titolo'), frase: t('vetrina.v3'), html: v.solidita },
+  { titolo: t('vetrina.v4Titolo'), frase: t('vetrina.v4'), html: csv },
+];
+---
+
+<div class="vetrina" data-vetrina>
+  {voci.map((x, i) => (
+    <div class="vetrina-voce">
+      <h3 class="voce-titolo">
+        <button type="button" class="voce-btn" id={`voce-${lingua}-${i + 1}`} aria-controls={`pannello-${lingua}-${i + 1}`} aria-expanded="true">
+          <span class="voce-num">{String(i + 1).padStart(2, '0')}</span>
+          <span class="voce-testo"><span class="voce-nome">{x.titolo}</span><span class="voce-frase">{x.frase}</span></span>
+        </button>
+      </h3>
+      <div class="vetrina-pannello" id={`pannello-${lingua}-${i + 1}`} role="region" aria-labelledby={`voce-${lingua}-${i + 1}`}>
+        <p class="vetrina-nota">{t('vetrina.nota')}</p>
+        <div class="vetrina-corpo"><Fragment set:html={x.html} /></div>
+      </div>
+    </div>
+  ))}
+</div>
+<script>
+  import '../home/vetrina-attiva.ts';
+</script>

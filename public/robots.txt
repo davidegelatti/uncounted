@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://uncounted.davidegelatti.com/sitemap-index.xml

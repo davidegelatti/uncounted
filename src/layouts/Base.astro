@@ -1,0 +1,102 @@
+---
+// Impaginazione comune: testata, navigazione, piede, metadati e collegamenti tra le due lingue.
+import '../styles/font.css';
+import '../styles/sito.css';
+import '../styles/icone.css';
+import Logo from '../components/Logo.astro';
+import sito from '../../sito.config.json';
+import { traduttore, type Lingua } from '../i18n/indice';
+import { indirizzo, type Pagina } from '../i18n/percorsi';
+
+interface Props {
+  lingua: Lingua;
+  pagina: Pagina;
+}
+const { lingua, pagina } = Astro.props;
+const t = traduttore(lingua);
+const altra: Lingua = lingua === 'it' ? 'en' : 'it';
+const assoluto = (percorso: string): string => new URL(percorso, Astro.site).href;
+const titolo = pagina === 'home' ? `${sito.nomeProgetto} — ${t('pagina.home.titolo')}` : `${t(`pagina.${pagina}.titolo`)} · ${sito.nomeProgetto}`;
+const voci: Pagina[] = ['strumento', 'guida', 'metodo', 'validazione'];
+const immagine = lingua === 'it' ? '/img/anteprima.png' : '/img/anteprima-en.png';
+// Dati strutturati: un blocco di dati (non eseguibile), ammesso dalla CSP e dal test del sito.
+const autore = { '@type': 'Person', name: sito.autore };
+const datiStrutturati =
+  pagina === 'home'
+    ? { '@context': 'https://schema.org', '@type': 'WebSite', name: sito.nomeProgetto, url: assoluto(indirizzo(lingua, 'home')), inLanguage: lingua, description: t('pagina.home.descrizione'), author: autore }
+    : pagina === 'strumento'
+      ? { '@context': 'https://schema.org', '@type': 'WebApplication', name: sito.nomeProgetto, url: assoluto(indirizzo(lingua, 'strumento')), inLanguage: lingua, description: t('pagina.strumento.descrizione'), applicationCategory: 'BusinessApplication', operatingSystem: 'Any', browserRequirements: 'JavaScript', offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' }, author: autore }
+      : undefined;
+---
+
+<!doctype html>
+<html lang={lingua}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <script is:inline src="/tema.js"></script>
+    <title>{titolo}</title>
+    <meta name="description" content={t(`pagina.${pagina}.descrizione`)} />
+    <meta name="author" content={sito.autore} />
+    <link rel="canonical" href={assoluto(indirizzo(lingua, pagina))} />
+    <link rel="alternate" hreflang="it" href={assoluto(indirizzo('it', pagina))} />
+    <link rel="alternate" hreflang="en" href={assoluto(indirizzo('en', pagina))} />
+    <link rel="alternate" hreflang="x-default" href={assoluto(indirizzo('en', pagina))} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={sito.nomeProgetto} />
+    <meta property="og:title" content={titolo} />
+    <meta property="og:description" content={t(`pagina.${pagina}.descrizione`)} />
+    <meta property="og:url" content={assoluto(indirizzo(lingua, pagina))} />
+    <meta property="og:image" content={assoluto(immagine)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t('pagina.home.titolo')} />
+    <meta property="og:locale" content={lingua === 'it' ? 'it_IT' : 'en_GB'} />
+    <meta property="og:locale:alternate" content={lingua === 'it' ? 'en_GB' : 'it_IT'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {datiStrutturati && <script type="application/ld+json" set:html={JSON.stringify(datiStrutturati)} />}
+  </head>
+  <body>
+    <a class="salta" href="#contenuto">{t('nav.salta')}</a>
+    <header class="testata">
+      <div class="cornice testata-riga">
+        <a class="marchio" href={indirizzo(lingua, 'home')}><Logo /></a>
+        <button type="button" class="menu-btn" id="apri-menu" aria-expanded="false" aria-controls="menu-principale" hidden><span class="menu-ic" aria-hidden="true"></span>{t('nav.menu')}</button>
+        <nav id="menu-principale" aria-label={t('nav.principale')}>
+          {voci.map((v) => <a href={indirizzo(lingua, v)} class:list={[{ 'nav-azione': v === 'strumento' }]} aria-current={v === pagina ? 'page' : undefined}>{t(`nav.${v}`)}</a>)}
+          <a href="https://davidegelatti.com" target="_blank" rel="noopener" class="nav-esterno">{t('nav.autore')}<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> ({t('comune.nuovaScheda')})</span></a>
+        </nav>
+        <span class="lingua" role="group" aria-label={t('nav.lingua')}>
+          <strong aria-current="true">{lingua.toUpperCase()}</strong>
+          <a id="cambia-lingua" href={indirizzo(altra, pagina)} hreflang={altra} lang={altra}>{altra.toUpperCase()}</a>
+        </span>
+        <button type="button" class="tema-btn" id="cambia-tema" hidden data-etichetta={t('nav.tema')} data-nomi={JSON.stringify({ sistema: t('nav.temaSistema'), chiaro: t('nav.temaChiaro'), scuro: t('nav.temaScuro') })}>
+          <span class="tema-ic" aria-hidden="true"></span><span class="tema-testo" aria-hidden="true">{t('nav.temaSistema')}</span>
+        </button>
+        <span id="annuncio-tema" class="nascosto-vis" role="status" aria-live="polite"></span>
+      </div>
+    </header>
+    <main id="contenuto" class:list={[`pagina-${pagina}`]}><slot /></main>
+    <footer class="piede">
+      <div class="cornice piede-riga">
+        <a class="marchio" href={indirizzo(lingua, 'home')}><Logo piccolo /></a>
+        <a href={indirizzo(lingua, 'privacy')}>{t('nav.privacy')}</a>
+        <a href={indirizzo(lingua, 'comeFatto')}>{t('nav.comeFatto')}</a>
+        {sito.repository && <a href={sito.repository} target="_blank" rel="noopener">{t('piede.codice')}<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> ({t('comune.nuovaScheda')})</span></a>}
+        {sito.licenza && <a href={sito.licenza} target="_blank" rel="noopener">{t('piede.licenza')}<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> ({t('comune.nuovaScheda')})</span></a>}
+        <span>{t('piede.autore', { autore: sito.autore })} · <a href={indirizzo(lingua, 'comeFatto')}>{t('piede.claude')}</a></span>
+        <span class="nota">{t('piede.nota')} {t('piede.icone')}</span>
+        <span class="nota marchi">{t('piede.marchi')}</span>
+      </div>
+    </footer>
+    <script>
+      import '../lingua.ts';
+      import '../tema.ts';
+      import '../menu.ts';
+    </script>
+  </body>
+</html>

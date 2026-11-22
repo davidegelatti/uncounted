@@ -1,0 +1,16 @@
+---
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+---
+<figure><svg class="schema" viewBox="0 0 720 120" role="img" aria-label={t('schema.ordiniAria')}>
+  <text class="forte" x="4" y="18">{t('schema.ordiniReali')}</text>
+  <rect class="s-pieno-ambra" x="4" y="30" width="712" height="34" rx="6"/>
+  <rect class="s-pieno-blu" x="4" y="30" width="640" height="34" rx="6"/>
+  <rect class="s-pieno-oss" x="4" y="30" width="540" height="34" rx="6"/>
+  <rect class="s-b95" x="600" y="24" width="96" height="46" rx="6"/><rect class="s-b80" x="620" y="24" width="52" height="46" rx="6"/>
+  <text x="274" y="88" text-anchor="middle">{t('schema.ordiniVisti')}</text>
+  <text x="572" y="88" text-anchor="middle">{t('schema.ordiniConsenso')}</text>
+  <text x="716" y="88" text-anchor="end">{t('schema.ordiniAltre')}</text>
+  <path class="s-linea" d="M648 70 V100"/><text class="s2" x="644" y="114" text-anchor="end">{t('schema.ordiniConfine')}</text>
+</svg></figure>

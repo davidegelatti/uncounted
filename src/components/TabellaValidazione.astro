@@ -1,0 +1,38 @@
+---
+// Tabella dei risultati della validazione, letta da src/data/validazione.json (generato da `npm run validazione`).
+import dati from '../data/validazione.json';
+import { traduttore, type Lingua } from '../i18n/indice';
+interface Props {
+  lingua: Lingua;
+  scenari: string[];
+  /** 'copertura' (predefinito) oppure 'errore' */
+  tipo?: 'copertura' | 'errore';
+}
+const { lingua, scenari, tipo = 'copertura' } = Astro.props;
+const t = traduttore(lingua);
+const pc = (x: number): string => `${Math.round(x * 100)}`;
+const segno = (x: number): string => `${x >= 0 ? '+' : '−'}${Math.abs(Math.round(x * 100))}%`;
+const righe = scenari.map((id) => dati.scenari.find((s) => s.id === id)).filter((s) => s !== undefined);
+const coppia = (m: { cop80: number; cop95: number }): string => `${pc(m.cop80)} / ${pc(m.cop95)}`;
+---
+<div class="scorri">
+  <table>
+    <caption class="nota">{t(tipo === 'errore' ? 'val.didascaliaErrore' : 'val.didascalia')} {t('val.repliche', { n: dati.repliche, sim: dati.nSim })}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{t('val.colCodice')}</th>
+        <th scope="col">{t('val.colScenario')}</th>
+        {tipo === 'errore' ? <th scope="col">{t('val.colErrore')}</th> : <Fragment><th scope="col">{t('val.colSessioni')}</th><th scope="col">{t('val.colEventi')}</th><th scope="col">{t('val.colTransazioni')}</th><th scope="col">{t('val.colEntrate')}</th><th scope="col">{t('val.colCanaliSessioni')}</th></Fragment>}
+      </tr>
+    </thead>
+    <tbody>
+      {righe.map((s) => (
+        <tr>
+          <td class="codice-scenario">{s.id}</td>
+          <th scope="row">{t(`val.scenario.${s.id}`)}</th>
+          {tipo === 'errore' ? <td>{segno(s.metriche.sessioni.errore)} / {segno(s.metriche.transazioni.errore)}</td> : <Fragment><td>{coppia(s.metriche.sessioni)}</td><td>{coppia(s.metriche.eventi)}</td><td>{coppia(s.metriche.transazioni)}</td><td>{coppia(s.metriche.entrate)}</td><td>{coppia(s.canali.sessioni)}</td></Fragment>}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

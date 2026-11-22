@@ -1,0 +1,20 @@
+---
+// Logo del sito: due file definitivi in src/assets/logo/, uno per lo sfondo chiaro e uno per lo sfondo scuro.
+// Entrambi sono inseriti nella pagina e il CSS mostra quello del tema attivo (Sistema, Chiaro o Scuro): niente stili in linea.
+// Dal file si tolgono solo commenti e metadati (manifesto C2PA), che non servono nella pagina; i file restano invariati.
+import chiaro from '../assets/logo/logo-su-sfondo-chiaro.svg?raw';
+import scuro from '../assets/logo/logo-su-sfondo-scuro.svg?raw';
+interface Props {
+  piccolo?: boolean;
+}
+const { piccolo = false } = Astro.props;
+const pulisci = (svg: string, classe: string): string =>
+  svg
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<metadata[\s\S]*?<\/metadata>/g, '')
+    .replace(/\s+xmlns:c2pa="[^"]*"/g, '')
+    .replace('<svg ', `<svg class="${classe}" role="img" aria-label="Uncounted" focusable="false" `)
+    .trim();
+---
+
+<span class:list={['logo', { piccolo }]}><Fragment set:html={pulisci(chiaro, 'logo-chiaro')} /><Fragment set:html={pulisci(scuro, 'logo-scuro')} /></span>

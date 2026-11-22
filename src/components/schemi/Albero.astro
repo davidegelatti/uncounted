@@ -1,0 +1,15 @@
+---
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+---
+<figure><svg class="schema" viewBox="0 0 760 250" role="img" aria-label={t('schema.alberoAria')}>
+  <rect class="s-oss" x="4" y="10" width="170" height="44" rx="10"/><text class="forte" x="89" y="37" text-anchor="middle">{t('schema.alberoD1')}</text>
+  <path class="s-linea" d="M174 32 H580 M89 54 V96"/><text class="s2" x="380" y="24" text-anchor="middle">{t('schema.alberoBasic')}</text><text class="s2" x="97" y="80">{t('schema.alberoAdvanced')}</text>
+  <rect class="s-oss" x="4" y="96" width="170" height="44" rx="10"/><text class="forte" x="89" y="123" text-anchor="middle">{t('schema.alberoD2')}</text>
+  <path class="s-linea" d="M174 118 H660 V54 M89 140 V182"/><text class="s2" x="380" y="110" text-anchor="middle">{t('schema.alberoAltra')}</text><text class="s2" x="97" y="166">{t('schema.alberoCombinata')}</text>
+  <rect class="s-oss" x="4" y="182" width="170" height="44" rx="10"/><text class="forte" x="89" y="209" text-anchor="middle">{t('schema.alberoD3')}</text>
+  <path class="s-linea" d="M174 196 H700 V54 M174 214 H430"/><text class="s2" x="380" y="188" text-anchor="middle">{t('schema.alberoNo')}</text><text class="s2" x="300" y="232" text-anchor="middle">{t('schema.alberoInclusi')}</text>
+  <rect class="s-verde" x="580" y="10" width="176" height="44" rx="10"/><text class="forte" x="668" y="37" text-anchor="middle">{t('schema.alberoStima')}</text>
+  <rect class="s-rosso" x="430" y="200" width="176" height="44" rx="10"/><text class="forte" x="518" y="227" text-anchor="middle">{t('schema.alberoBlocco')}</text>
+</svg><figcaption>{t('schema.alberoCautela')}</figcaption></figure>

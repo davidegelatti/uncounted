@@ -1,0 +1,48 @@
+---
+// «Cosa risolve», conclusione: calcolo semplice (osservato ÷ 60%) contro l'esempio, per sessioni e ordini.
+// Sessioni: 69,2 ÷ 0,6 = 115 contro 100. Ordini: 9 ÷ 0,6 = 15 contro 9 + 1,6 ≈ 11 (sovrastima di circa il 40%).
+// Ogni riga: etichetta e valore in HTML, barra in SVG (solo segni), così si legge a ogni larghezza.
+// Su desktop i due gruppi stanno affiancati e le etichette delle righe compaiono una volta sola a sinistra.
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+const W = 1000; // larghezza della barra più lunga di ogni gruppo
+const gruppi = [
+  { nome: t('risolve.cSessioni'), contato: 69.2, semplice: 115.4, vero: 100, etSemplice: '115', etVero: '100' },
+  { nome: t('risolve.cOrdini'), contato: 9, semplice: 15, vero: 10.6, etSemplice: '15', etVero: t('risolve.circa', { v: 11 }) },
+].map((g) => {
+  const s = W / g.semplice; // scala propria del gruppo: conta il confronto tra le due righe
+  return {
+    ...g,
+    righe: [
+      { testo: t('risolve.cSemplice'), contato: g.contato * s, extra: (g.semplice - g.contato) * s, classe: 'barra-semplice', valore: g.etSemplice },
+      { testo: t('risolve.cEsempio'), contato: g.contato * s, extra: (g.vero - g.contato) * s, classe: 'barra-persa', valore: g.etVero },
+    ],
+  };
+});
+---
+
+<div class="dividere" role="img" aria-label={t('risolve.cAria')}>
+  {gruppi.map((g, i) => (
+    <div class={`dividere-gruppo g${i + 1}`} aria-hidden="true">
+      <p class="dividere-nome">{g.nome}</p>
+      {g.righe.map((r, j) => (
+        <div class={`dividere-riga r${j + 1}`}>
+          <span class="dividere-etichetta">{r.testo}</span>
+          <span class="dividere-traccia">
+            <svg class="fig-registro dividere-barra" viewBox={`0 0 ${W} 24`} preserveAspectRatio="none" focusable="false">
+              <rect class="barra-contata" x="0" y="0" width={r.contato} height="24" />
+              <rect class={r.classe} x={r.contato + 6} y="1.5" width={Math.max(0, r.extra - 8)} height="21" />
+            </svg>
+            <span class="dividere-valore">{r.valore}</span>
+          </span>
+        </div>
+      ))}
+    </div>
+  ))}
+</div>
+<ul class="legenda legenda-risolve" aria-hidden="true">
+  <li><i class="seg-contato"></i> {t('risolve.cLegContato')}</li>
+  <li><i class="seg-perso"></i> {t('risolve.cLegPerso')}</li>
+  <li><i class="seg-semplice"></i> {t('risolve.cLegSemplice')}</li>
+</ul>

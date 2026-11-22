@@ -1,0 +1,339 @@
+---
+indice: true
+sezioni:
+  - { id: create-exploration, titolo: 'Creare l’esplorazione in GA4' }
+  - { id: file-errors, titolo: 'Errori frequenti nel file' }
+  - { id: find-consent-rate, titolo: 'Trovare il tasso di accettazione' }
+  - { id: consent-mode-check, titolo: 'Capire quale Consent Mode è installato' }
+  - { id: reporting-identity, titolo: 'L’identità report' }
+  - { id: data-quality-icon, titolo: 'L’icona di qualità dei dati' }
+  - { id: compare-with-google, titolo: 'Confrontare con la stima di Google' }
+  - { id: read-results, titolo: 'Leggere i risultati' }
+  - { id: use-real-orders, titolo: 'Usare gli ordini reali' }
+  - { id: best-use, titolo: 'Usare lo Stimatore al meglio' }
+  - { id: faq, titolo: 'Domande frequenti' }
+---
+import FiguraGa4 from '../../components/FiguraGa4.astro';
+
+# Guida
+
+Come preparare i dati, dove trovare le risposte che lo stimatore chiede e come leggere il risultato.
+Le diciture di GA4 sono quelle dell’interfaccia in italiano; se la tua è in inglese, accanto trovi il nome originale.
+
+<section id="create-exploration">
+
+## Creare l’esplorazione in GA4
+
+Lo stimatore legge un CSV esportato da un’esplorazione in formato libero. Bastano pochi minuti.
+
+1. In GA4 apri **Esplora** e scegli **Formato libero** (Free form).
+2. Nel pannello **Variabili**, in alto, imposta il **periodo**. Va bene da quattro a dodici settimane: un periodo più lungo non rende la stima più precisa, ma aumenta il numero di righe.
+3. Accanto a **Dimensioni**, premi «+» e importa **Data** e **Gruppo di canali predefinito della sessione** (Session default channel group).
+4. Accanto a **Metriche**, premi «+» e importa **Sessioni**, **Totale utenti**, **Eventi chiave**, **Transazioni** ed **Entrate totali** (Sessions, Total users, Key events, Transactions, Total revenue). Le ultime quattro sono facoltative: un sito senza ecommerce può fare a meno di transazioni ed entrate.
+5. Nel pannello **Impostazioni**, trascina **Data** e poi il **gruppo di canali** in **Righe**. Lascia vuote le **Colonne**.
+6. Sempre in **Impostazioni**, porta **Mostra righe** al valore massimo, **500**, e lascia **Righe nidificate** su **No**.
+7. Più in basso, trascina le metriche in **Valori**. Lascia vuoti i **Filtri**.
+8. In alto a destra premi l’icona di **download** (Esporta dati) e scegli **CSV**.
+
+<div class="figure-affiancate">
+<FiguraGa4 nome="impostazioni" lingua="it" forma="alta" apri="Apri a grandezza piena"
+  alt="Pannelli Variabili e Impostazioni di un’esplorazione GA4. Variabili: periodo personalizzato dal 21 settembre all’8 novembre 2026; dimensioni Gruppo di canali predefinito della sessione e Data; metriche Totale utenti, Eventi chiave, Sessioni, Transazioni, Entrate totali. Impostazioni: Righe Data e Gruppo di canali predefinito della sessione, Mostra righe 500, Righe nidificate No, Colonne vuote."
+  didascalia="Passi 2–6: periodo, dimensioni, metriche, Righe e Mostra righe."
+  annotazioni={[
+    { n: 2, x: 40, y: 290, w: 460, h: 80 },
+    { n: 3, x: 40, y: 525, w: 470, h: 318 },
+    { n: 4, x: 40, y: 890, w: 470, h: 522 },
+    { n: 5, x: 585, y: 128, w: 465, h: 305, lato: 'destra' },
+    { n: 6, x: 585, y: 755, w: 465, h: 283, lato: 'destra' },
+  ]} />
+<FiguraGa4 nome="valori" lingua="it" forma="alta" apri="Apri a grandezza piena"
+  alt="Gli stessi pannelli, più in basso: in Impostazioni la sezione Valori contiene Sessioni, Totale utenti, Eventi chiave, Transazioni, Entrate totali; i Filtri sono vuoti."
+  didascalia="Passo 7: le metriche in Valori, nessun filtro."
+  annotazioni={[{ n: 7, x: 583, y: 595, w: 465, h: 520, lato: 'destra' }]} />
+</div>
+
+**L’ordine delle colonne non conta.** Lo stimatore riconosce le colonne dal nome, non dalla posizione: nelle schermate, per esempio, le metriche in **Variabili** sono in un ordine diverso da quello dei **Valori**, ed entrambi vanno bene.
+
+**Il limite delle 500 righe.** Il file ha una riga per ogni giorno e canale, e GA4 esporta al massimo le righe mostrate. Il periodo delle schermate va dal 21 settembre all’8 novembre: **49 giorni con circa 10 canali al giorno, cioè circa 490 righe**, appena sotto il limite. Con più canali o un periodo più lungo le righe in eccesso non vengono esportate e lo stimatore vedrebbe un periodo incompleto: accorcia il periodo. Se succede, lo stimatore te lo segnala confrontando le righe con la riga dei totali.
+
+<FiguraGa4 nome="tabella" lingua="it" forma="larga" apri="Apri a grandezza piena"
+  alt="La tabella dell’esplorazione: colonne Data, Gruppo di canali predefinito della sessione, Sessioni, Totale utenti, Eventi chiave, Transazioni, Entrate totali. In alto la riga Totale (242.832 sessioni, 184.466 utenti); sotto, una riga per canale del 21 settembre 2026: Cross-network, Direct, Email, Organic Search, Organic Shopping, Organic Social, Organic Video, Paid Search, Referral, Unassigned."
+  didascalia="La tabella prima dell’esportazione: in alto, evidenziata, la riga dei totali; poi una riga per giorno e canale. Nel CSV i numeri avranno il punto decimale e nessun separatore delle migliaia."
+  annotazioni={[{ x: 6, y: 128, w: 2228, h: 112 }]} />
+
+<FiguraGa4 nome="download" lingua="it" forma="media" apri="Apri a grandezza piena"
+  alt="Menu di esportazione di GA4 aperto dall’icona di download in alto a destra, con le voci Fogli Google, TSV, CSV, PDF e PDF (tutte le schede); CSV è evidenziato."
+  didascalia="Passo 8: icona di download, poi CSV."
+  annotazioni={[{ n: 8, x: 640, y: 66, w: 76, h: 80, lato: 'destra' }, { n: 8, x: 180, y: 470, w: 545, h: 140 }]} />
+
+Le schermate vengono dall’account demo di Google Analytics.
+
+**Un solo evento chiave.** La metrica «Eventi chiave» somma tutti gli eventi chiave della proprietà. Non filtrare l’esplorazione per nome dell’evento: il filtro toglierebbe anche le sessioni in cui l’evento non c’è, e la stima delle sessioni sarebbe sbagliata. Se il file contiene più colonne di eventi chiave (per esempio «Eventi chiave: generate_lead» e «Eventi chiave: purchase»), lo stimatore ti chiede quale usare.
+
+**Com’è fatto il file.** In testa ci sono alcune righe di commento che iniziano con «#» (il nome della proprietà, il nome dell’esplorazione, il periodo). Poi le intestazioni, e subito sotto la **riga dei totali**: data e canale vuoti, i totali del periodo e l’etichetta «Totale complessivo» in una colonna in più alla fine. Le altre righe sono una per giorno e canale; se in un giorno un canale non ha traffico, la riga semplicemente manca. I numeri hanno il punto decimale e nessun separatore delle migliaia (per esempio 2177.6) anche con GA4 in italiano.
+
+**La riga dei totali.** Lo stimatore non la somma mai ai dati. La usa in due modi: per controllare che il file sia completo, confrontandola con la somma delle righe, e per leggere gli **utenti unici del periodo**, che nella riga dei totali GA4 conta già senza doppioni. È un dato del file, come sessioni e transazioni: se il file è coerente con la riga dei totali, lo stimatore lo usa da solo. In «Migliora la stima» → «Utenti del periodo» la scheda dice da dove viene il valore («Letto dal tuo export», «Inserito da te», «Non disponibile») e puoi modificarlo o scegliere di non usarlo; la scelta resta anche quando ricalcoli. Il valore non va nel link con le ipotesi; nel PDF e nel CSV è indicata la provenienza.
+
+</section>
+
+<section id="file-errors">
+
+## Errori frequenti nel file
+
+Quando il file non va, lo stimatore indica la riga e la colonna. I casi più comuni:
+
+- **Manca una colonna.** Di solito tra le Righe c’è una dimensione diversa, per esempio «Sorgente/mezzo» al posto del gruppo di canali, o «Settimana» al posto di «Data». Correggi l’esplorazione ed esporta di nuovo.
+- **La data non è valida.** La colonna Data deve contenere giorni nel formato AAAAMMGG (per esempio 20260315). Succede se hai usato «Settimana» o «Mese», o se il file è stato aperto e salvato con un foglio di calcolo che ha cambiato il formato delle date.
+- **Un numero non è valido.** In una colonna di metriche c’è del testo. Capita soprattutto dopo una modifica a mano. I numeri possono essere scritti sia all’italiana (1.234,56) sia all’inglese (1,234.56).
+- **Il file è vuoto o contiene solo commenti.** L’esplorazione non aveva dati nel periodo scelto, oppure è stato esportato un altro formato. Scegli CSV, non Fogli Google, PDF o Excel.
+- **La colonna Sessioni contiene solo zeri.** Controlla periodo e filtri dell’esplorazione.
+- **La somma delle righe non torna con la riga dei totali.** Lo stimatore lo segnala quando la differenza supera il 2% (piccole differenze sono normali in GA4). Di solito «Mostra righe» era sotto il massimo, il periodo aveva più righe di quante l’esplorazione ne mostri, oppure il file è stato modificato a mano. Correggi ed esporta di nuovo.
+
+Lo stimatore sopporta da solo le righe di commento che GA4 mette in testa al file, la riga dei totali (in testa o in fondo), le righe mancanti, le celle vuote e il canale «(not set)», che tratta come un canale a sé. Oltre ai canali più comuni, GA4 può riportare anche **Organic Shopping**, **Paid Other**, **AI Assistant** e **Unassigned**: sono canali come gli altri.
+
+</section>
+
+<section id="find-consent-rate">
+
+## Trovare il tasso di accettazione
+
+Il tasso lo trovi nei report della piattaforma che gestisce il banner dei cookie (CMP). Per lo stimatore contano tre cose: il valore, **come è calcolato** (per visitatore o per banner mostrato) e **se comprende chi ignora il banner** senza scegliere.
+
+Le piattaforme chiamano e calcolano il tasso in modi diversi. Quello che segue riassume le loro guide ufficiali; i nomi dei menu possono cambiare tra una versione e l’altra.
+
+- **Usercentrics** (Interaction Analytics). L’«Accept Rate» è calcolato **solo su chi ha interagito** con il banner (accettazioni divise per accettazioni, rifiuti e salvataggi): chi ignora il banner non è compreso. L’«Interaction Rate» dice quanti hanno interagito rispetto alle volte in cui il banner è stato mostrato. Per lo stimatore: tasso = Accept Rate; «Il tasso tiene conto di chi non fa nessuna scelta?» → **No**; come quota di chi ignora puoi usare 100 meno l’Interaction Rate.
+- **iubenda** (scheda *Privacy Controls and Cookie Solution Analytics*; i dati per singolo sito richiedono il piano Ultimate). I grafici sono calcolati sulle **visualizzazioni di pagina**, non sui visitatori: il riquadro che confronta i consensi con le volte in cui l’avviso è stato mostrato corrisponde a «Per banner mostrato». Le visualizzazioni in cui il banner è stato ignorato sono contate a parte («bounced»). Attenzione: tra i modi di dare il consenso iubenda può contare anche lo scorrimento della pagina o la chiusura del banner, se li hai abilitati.
+- **Cookiebot** (Usercentrics). Il pannello mostra la quota di consensi raccolti dal banner. Controlla nella descrizione del grafico se il calcolo comprende chi ignora il banner; se non è indicato, rispondi «Non lo so».
+- **OneTrust** (scheda *Dashboard* di Cookie Consent, con l’opzione di registrazione dei consensi attiva). Registra le interazioni con il banner e con il centro preferenze (accetta tutto, rifiuta tutto, chiudi, salva). Le metriche disponibili dipendono dalla configurazione: se non trovi una definizione esplicita, rispondi «Non lo so» alle due domande sul calcolo.
+
+**Se hai i numeri assoluti** di accettazioni e non accettazioni (rifiuti più chi ignora), puoi inserirli nelle impostazioni per esperti: lo stimatore ne ricava un tasso preciso.
+
+**Se il banner è cambiato** durante il periodo, indica la data del cambio e il nuovo tasso nelle impostazioni per esperti.
+
+</section>
+
+<section id="consent-mode-check">
+
+## Capire quale Consent Mode è installato
+
+- **Basic**: i tag di Google partono solo dopo che il visitatore accetta. Chi rifiuta non lascia nessuna traccia in GA4.
+- **Advanced**: i tag partono subito. Senza consenso inviano segnali senza cookie, che Google può usare per stimare il traffico mancante.
+
+Per controllare: apri il sito in una finestra anonima, **non** accettare i cookie e guarda con **Tag Assistant** (tagassistant.google.com) o nella scheda Rete degli strumenti per sviluppatori se partono richieste verso Google Analytics. Se partono, è Advanced. In alternativa chiedi a chi ha installato il banner.
+
+Advanced non basta perché Google stimi davvero il traffico mancante: servono anche l’identità report giusta e un volume minimo di traffico. Le due sezioni seguenti spiegano come verificarlo.
+
+</section>
+
+<section id="reporting-identity">
+
+## L’identità report
+
+In GA4: **Amministrazione → Visualizzazione dei dati → Identità report** (Admin → Data display → Reporting identity). Serve il ruolo di Editor sulla proprietà per modificarla, non per vederla.
+
+- **Combinato** (Blended): usa User-ID, poi l’identificatore del dispositivo e, dove mancano entrambi, la **modellazione**. È l’unica opzione con cui Google può aggiungere ai report una stima del traffico senza consenso.
+- **In osservazione** (Observed) e **Basato sul dispositivo** (Device-based): nessuna modellazione. I report contengono solo i dati osservati.
+
+Cambiare l’identità report non modifica i dati raccolti e si può tornare indietro in qualsiasi momento, ma l’impostazione vale per tutti gli utenti della proprietà.
+
+</section>
+
+<section id="data-quality-icon">
+
+## L’icona di qualità dei dati
+
+È la piccola icona in alto, accanto al titolo del report o dell’esplorazione. Passandoci sopra compare una di queste diciture:
+
+- «**Inclusi i dati utente stimati**»: la modellazione è attiva e l’esplorazione contiene già la stima di Google. Lo stimatore si ferma.
+- «**Esclusi i dati utente stimati**»: l’identità report non permette la modellazione.
+- «**Dati utente stimati non disponibili**»: la proprietà non rispetta le soglie (almeno 1.000 eventi al giorno senza consenso per 7 giorni e 1.000 utenti al giorno con consenso in 7 degli ultimi 28 giorni), oppure il periodo scelto è precedente all’attivazione.
+
+Le esplorazioni in **formato libero** sono tra le poche che includono i dati stimati: per questo la domanda è importante proprio per il file che carichi.
+
+</section>
+
+<section id="compare-with-google">
+
+## Confrontare con la stima di Google
+
+Se la modellazione è attiva, lo stimatore non aggiunge nulla ai totali. Puoi però confrontare ciò che ha aggiunto Google con ciò che avrebbe stimato lo stimatore.
+
+1. In **Identità report**, passa temporaneamente a **Basato sul dispositivo**.
+2. Riapri la stessa esplorazione, con lo stesso periodo, ed esportala di nuovo: conterrà solo i dati osservati.
+3. **Rimetti subito l’identità report su Combinato.**
+4. Nello stimatore, al passo del Consent Mode, carica questo secondo file e completa il tasso di accettazione.
+
+La tabella di confronto mostra, per ogni grandezza, quanto ha aggiunto Google e l’intervallo dello stimatore. Un esito «fuori dall’intervallo» non dice chi ha ragione: i due metodi usano informazioni diverse.
+
+</section>
+
+<section id="read-results">
+
+## Leggere i risultati
+
+- **Il dato principale** dice quanta parte delle sessioni GA4 ti mostra. «Probabilmente tra X e Y (8 volte su 10)» è l’intervallo che, su dati di prova, contiene il valore vero circa 8 volte su 10, se le ipotesi sono giuste.
+- **Le schede** riportano i totali stimati di sessioni, transazioni, entrate ed eventi chiave, con l’osservato, la parte persa e l’intervallo più largo («quasi certamente», 19 volte su 20).
+- **Per canale** è la parte meno solida: presuppone che il consenso sia simile in tutti i canali. Leggilo come indicazione, non come misura.
+- **Quanto è solida questa stima** indica quale ipotesi pesa di più e come cambierebbe il totale se fosse sbagliata. È il posto giusto per capire quale dato conviene procurarsi.
+- Le ipotesi marcate **Predefinita** non le hai scelte tu: controllale e confermale, oppure cambiale.
+
+</section>
+
+<section id="use-real-orders">
+
+## Usare gli ordini reali
+
+Gli ordini del gestionale sono il dato che migliora di più la stima di ordini ed entrate. Inseriscili solo se sono **confrontabili con GA4**:
+
+- solo gli ordini del sito web, nello stesso periodo del file;
+- senza ordini telefonici, in negozio, da marketplace, rinnovi automatici di abbonamenti, ordini di prova o annullati;
+- le entrate con la stessa definizione di GA4: stessa scelta su IVA, spedizione, sconti e resi.
+
+Se compare **«Mancano meno ordini di quanto prevedono le tue risposte»** (oppure «Mancano più ordini…»), gli ordini che GA4 non ha registrato non corrispondono a quelli che le risposte prevedono, tra persi per il consenso e persi per altre cause. Non è un errore: dice che probabilmente una risposta, o uno dei dati inseriti, non descrive bene il sito. Lo stimatore mostra il confronto in una figura e, per ogni risposta sul tipo di pubblico, se con quella i conti tornerebbero; elenca poi i punti da controllare che non si possono calcolare: il periodo degli ordini, il perimetro, il tasso di accettazione e, se mancano meno ordini, le transazioni contate due volte in GA4. Finché i conti non tornano, ordini ed entrate sono stimati senza gli ordini reali; sessioni e utenti non cambiano. Vedi anche [Mancano più o meno ordini di quanto previsto](#orders-mismatch).
+
+### Che pubblico ha il sito?
+
+Con gli ordini reali lo stimatore chiede che pubblico ha il sito. Serve a dividere gli ordini mancanti tra quelli persi per il consenso e quelli che GA4 perde per altre cause, soprattutto ad blocker e browser che bloccano Google Analytics. È una risposta che conta: **sceglierne una sbagliata sposta le transazioni stimate di circa il 15%**.
+
+| Risposta | Valore usato | Siti tipici |
+|---|---|---|
+| **Largo consumo, soprattutto mobile** | circa 7% | abbigliamento e accessori, cosmetica, spesa e alimentari, arredo, ricette e lifestyle, prenotazioni per famiglie; più di metà del traffico da smartphone |
+| **Tecnico o professionale, soprattutto desktop** | circa 20% | software e SaaS, hosting e domini, componenti elettronici e informatica, forniture industriali, strumenti per sviluppatori o per il marketing, editoria tecnica |
+| **Misto / non lo so** | circa 9%, margine ampio | cataloghi generalisti (per esempio elettronica di consumo), editoria, siti con pubblici diversi; oppure quando non conosci abbastanza il tuo pubblico |
+| **Uso il tagging lato server o un proxy proprio** | circa 2% | GA4 passa da un dominio tuo (per esempio un server di Google Tag Manager su un sottodominio): gli ad blocker lo intercettano molto meno |
+
+Due indizi che trovi in GA4: la quota di sessioni da **desktop** (sopra il 60% fa pensare a un pubblico professionale) e la quota di visite da **Firefox** e **Brave**, i browser che bloccano di più. Nel dubbio scegli «Misto / non lo so»: l’intervallo si allarga, ma resta onesto. Se conosci il valore, puoi inserirlo nelle impostazioni per esperti.
+
+</section>
+
+<section id="best-use">
+
+## Usare lo Stimatore al meglio
+
+<div class="mappa-menu">
+<FiguraGa4 prefisso="stimatore" nome="menu" lingua="it" forma="stretta" apri="Apri a grandezza piena"
+  alt="La colonna di sinistra dello Stimatore con i dati di esempio, divisa in quattro sezioni numerate: 01 Le tue risposte (File, Consent Mode, Tasso di accettazione), 02 Ipotesi su chi non accetta (Quante volte ritorna, Quanto converte, Quanto spende per ordine, ciascuna con cursore e pulsante Va bene così), 03 Migliora la stima (Ordini reali, Utenti del periodo), 04 Altro (Impostazioni per esperti, Ripristina le ipotesi, Copia il link con le ipotesi, Ricorda le ipotesi)."
+  didascalia="La colonna di sinistra, con i dati di esempio." />
+<div>
+
+La colonna di sinistra raccoglie tutto ciò che decide il risultato, in quattro sezioni:
+
+- **01 Le tue risposte.** Il file, il Consent Mode e il tasso di accettazione: sono dati tuoi, e senza di loro la stima non parte.
+- **02 Ipotesi su chi non accetta.** Quante volte ritorna, quanto converte, quanto spende per ordine: nessuno le misura, partono da valori ragionati segnati «Predefinita».
+- **03 Migliora la stima.** Gli ordini reali del gestionale e gli utenti del periodo: dati in più che restringono alcune grandezze.
+- **04 Altro.** Le impostazioni per esperti (tassi per dispositivo e periodo; numeri assoluti; quanto sei sicuro delle ipotesi), il link con le ipotesi e la memoria sul dispositivo.
+
+Il pulsante «?» accanto a una domanda o a un’ipotesi apre una spiegazione breve, con il collegamento alla parte della Guida o del Metodo che ne parla.
+
+</div>
+</div>
+
+<div class="situazione" id="narrower-range">
+
+### Voglio un intervallo più stretto
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Guarda prima «Quanto è solida questa stima»: dice da quale fonte viene l’incertezza. Se pesa di più il <strong>tasso di accettazione</strong>, rendilo più affidabile: controlla nella CMP come è calcolato e, se hai i numeri assoluti di accettazioni e non accettazioni, inseriscili nelle impostazioni per esperti. Se pesa «<strong>quanto converte</strong>», inserisci gli <strong>ordini reali</strong> del gestionale.</dd>
+<dt>Cosa cambia</dt>
+<dd>Un tasso dichiarato «Lo conosco con precisione» o i numeri assoluti restringono l’intervallo delle sessioni. Gli ordini reali restringono molto ordini ed entrate, ma non le sessioni: dicono quanti ordini mancano, non quante visite. <strong>Caricare più giorni non aiuta</strong>: l’intervallo dipende dalle ipotesi, non dal rumore dei dati. Non stringere le ipotesi per avere un numero più netto: se il margine non corrisponde a ciò che sai, l’intervallo promette più di quanto mantiene. <a href="/it/metodo/#in-short">Perché</a></dd>
+</dl>
+</div>
+
+<div class="situazione" id="banner-change">
+
+### Ho cambiato banner a metà periodo
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Apri le <strong>impostazioni per esperti</strong> → «Cambi di tasso nel periodo» e indica la data del cambio e il nuovo tasso. Il tasso principale vale dall’inizio del file fino a quella data.</dd>
+<dt>Cosa cambia</dt>
+<dd>Nelle prove della <a href="/it/validazione/#robustness">Validazione</a> i totali restano corretti sia dichiarando il cambio sia no; cambia la ripartizione tra i giorni, quindi conta soprattutto per il grafico «Giorno per giorno». Le ipotesi su chi non accetta restano le stesse per tutto il periodo: un banner diverso cambia quanti accettano e, in linea di principio, anche chi accetta, ed è un limite dichiarato.</dd>
+</dl>
+</div>
+
+<div class="situazione" id="mobile-desktop">
+
+### Il consenso cambia tra mobile e desktop
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Nelle <strong>impostazioni per esperti</strong> → «Tassi per dispositivo» inserisci, per ogni dispositivo, il tasso di accettazione e la quota delle sessioni che vedi in GA4. Servono almeno due righe.</dd>
+<dt>Cosa cambia</dt>
+<dd>Lo stimatore ne ricava il tasso complessivo, che sostituisce la percentuale indicata nelle risposte. I risultati non si dividono per dispositivo, perché l’export non contiene il dispositivo. Nelle prove della <a href="/it/validazione/#robustness">Validazione</a>, con differenze come quelle provate (consenso 50% su mobile e 75% su desktop, una volta e mezza le visite su desktop), il solo tasso globale sovrastima le sessioni di circa il 4%; con i tassi per dispositivo l’errore sparisce. Con differenze maggiori l’errore cresce; se le visite sono simili tra dispositivi, il tasso globale basta. <a href="/it/metodo/#channels">Approfondisci</a></dd>
+</dl>
+</div>
+
+<div class="situazione" id="channel-low-consent">
+
+### Un canale accetta molto meno degli altri
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Niente da inserire. Il totale non risente delle differenze tra canali; leggi il dato di quel canale come indicativo.</dd>
+<dt>Cosa cambia</dt>
+<dd>Nelle prove con un consenso molto diverso tra canali (dal 30% all’85%) il totale resta corretto (copertura 79 su 100), mentre l’intervallo delle sessioni del singolo canale contiene il valore vero meno di una volta su due. Se il consenso varia poco tra i canali (entro circa 15 punti dal tasso globale, come assume lo stimatore), anche il dettaglio per canale regge: copertura circa 80 su 100. <a href="/it/metodo/#channels">Approfondisci</a></dd>
+</dl>
+</div>
+
+<div class="situazione" id="default-assumptions">
+
+### Non so cosa rispondere alle ipotesi
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Lasciale come sono, se non hai dati: i valori predefiniti sono ragionati e hanno già un margine plausibile largo, che entra nell’intervallo. Spostale solo se sai qualcosa sul tuo pubblico, per esempio da uno strumento di statistiche senza cookie. Premi «<strong>Va bene così</strong>» quando le hai lette e ti sembrano ragionevoli per il tuo sito.</dd>
+<dt>Cosa cambia</dt>
+<dd>«Va bene così» non cambia i numeri: l’ipotesi passa da «Predefinita» a «Confermata», anche nel PDF, e nel CSV scende il conteggio delle ipotesi predefinite. Spostare un cursore cambia invece i risultati, e «Quanto è solida questa stima» mostra quanto pesa ogni ipotesi. Per «quanto converte» il rimedio migliore sono gli ordini reali, che la sostituiscono. <a href="/it/metodo/#return-ratio">Le ipotesi nel Metodo</a></dd>
+</dl>
+</div>
+
+<div class="situazione" id="orders-mismatch">
+
+### Mancano più o meno ordini di quanto previsto
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Leggi il confronto: gli ordini mancanti davvero (gestionale meno GA4) e quelli previsti dalle tue risposte, divisi tra consenso e altre cause (ad blocker, pagamenti con un servizio esterno da cui il cliente non torna al sito, errori del tag di acquisto). Se una risposta sul tipo di pubblico è segnata «compatibile con i tuoi dati», <strong>sceglila solo se corrisponde davvero al sito</strong>: non è un modo per far tornare i conti. Poi controlla il periodo degli ordini, il perimetro (telefono, negozio, rinnovi, altri siti), il tasso di accettazione e, se mancano meno ordini, le transazioni contate due volte in GA4.</dd>
+<dt>Cosa cambia</dt>
+<dd>Finché i conti non tornano, ordini ed entrate sono stimati senza gli ordini reali, con le sole ipotesi; sessioni e utenti non cambiano. Quando i conti tornano, gli ordini reali sostituiscono l’ipotesi «quanto converte» e restringono l’intervallo di ordini ed entrate. Il valore tecnico che servirebbe è nei «Dettagli» del riquadro. <a href="/it/metodo/#real-orders">Approfondisci</a></dd>
+</dl>
+</div>
+
+<div class="situazione" id="client-report">
+
+### Devo presentare la stima a un cliente
+
+<dl>
+<dt>Cosa fare</dt>
+<dd>Prima di esportare, conferma o modifica le ipotesi predefinite. Poi, in «Porta via i risultati», scegli <strong>Stampa o salva in PDF</strong>: il PDF ha un’intestazione con la data e riporta le risposte e le ipotesi usate, ciascuna con il suo stato (Predefinita, Confermata, Modificata). Con <strong>Scarica il CSV</strong> hai gli stessi numeri in tabella. Con <strong>Copia il link con le ipotesi</strong> un collega può riaprire lo Stimatore con le stesse risposte e ipotesi: il link non contiene il file, gli ordini o gli utenti, quindi per vedere i numeri dovrà caricare l’export.</dd>
+<dt>Cosa dire</dt>
+<dd>Presenta il risultato come un intervallo, non come un numero: «probabilmente tra… (8 volte su 10), se le ipotesi sono giuste». Il dettaglio per canale va mostrato come indicazione, e i limiti sono gli stessi della stima: vedi <a href="/it/metodo/#limits">Limiti</a>.</dd>
+</dl>
+</div>
+
+</section>
+
+<section id="faq">
+
+## Domande frequenti
+
+**Che periodo conviene usare?** Da quattro a dodici settimane. Un periodo più lungo non stringe l’intervallo: l’incertezza viene dalle ipotesi, non dal numero di giorni.
+
+**Funziona per un sito senza ecommerce?** Sì. Senza transazioni ed entrate lo stimatore stima sessioni, utenti ed eventi chiave.
+
+**Posso usarlo per più proprietà?** Sì, una alla volta: ogni file è letto separatamente e niente viene conservato.
+
+**Perché le conversioni crescono meno delle sessioni?** Perché chi non accetta i cookie, in media, converte meno di chi accetta. È l’ipotesi «Quanto converte», che puoi cambiare.
+
+**Che differenza c’è con la modellazione di Google?** Google stima il traffico senza consenso dai segnali senza cookie del Consent Mode Advanced, se la proprietà rispetta le soglie. Lo stimatore lo stima dal tasso di accettazione e da ipotesi dichiarate. Non vanno usati insieme sugli stessi dati.
+
+**Il sito è negli Stati Uniti o in un paese senza consenso preventivo?** Lo stimatore presuppone che il tracciamento parta solo dopo un consenso esplicito, come prevede la normativa europea. Dove il tracciamento è attivo finché l’utente non si oppone, la parte mancante è di solito molto più piccola e va stimata con il tasso di chi si oppone, non con quello di chi accetta.
+
+**Posso condividere le ipotesi con un collega?** Sì, con «Copia il link con le ipotesi». Il link contiene solo risposte e ipotesi: mai il file, gli ordini o gli utenti.
+
+**Lo stimatore conserva qualcosa?** No, a meno che tu non attivi «Ricorda le ipotesi». Vedi la pagina [Privacy](/it/privacy/).
+
+</section>
+
+<p><a class="btn primo" href="/it/stimatore/">Inizia</a></p>

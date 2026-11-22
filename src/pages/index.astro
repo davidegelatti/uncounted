@@ -1,0 +1,35 @@
+---
+// Radice del sito: scelta della lingua. Uno script porta alla lingua del browser; senza script restano i due collegamenti.
+import '../styles/font.css';
+import '../styles/sito.css';
+import sito from '../../sito.config.json';
+import { traduttore } from '../i18n/indice';
+const t = traduttore('it');
+const assoluto = (p: string): string => new URL(p, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{sito.nomeProgetto}</title>
+    <link rel="alternate" hreflang="it" href={assoluto('/it/')} />
+    <link rel="alternate" hreflang="en" href={assoluto('/en/')} />
+    <link rel="alternate" hreflang="x-default" href={assoluto('/en/')} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main class="centro">
+      <h1>{sito.nomeProgetto}</h1>
+      <p>{t('radice.testo')}</p>
+      <p class="lingue"><a class="btn primo" href="/it/" hreflang="it" lang="it">Italiano</a><a class="btn primo" href="/en/" hreflang="en" lang="en">English</a></p>
+    </main>
+    <script>
+      import '../radice.ts';
+    </script>
+  </body>
+</html>

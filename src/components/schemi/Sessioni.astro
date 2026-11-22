@@ -1,0 +1,25 @@
+---
+// Metodo, «il tasso non è per sessione»: dieci visitatori in righe, ciascuno con le sue visite come tacche.
+// 6 accettano e tornano 3 volte (18 sessioni contate), 4 non accettano e tornano 2 volte (8 non contate): 69%.
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+const righe = Array.from({ length: 10 }, (_, v) => ({ n: String(v + 1).padStart(2, '0'), accetta: v < 6, y: v * 18 + 22 }));
+const id = `sessioni-${lingua}`;
+---
+
+<figure>
+  <svg class="fig-registro" viewBox="0 0 640 230" role="img" aria-labelledby={id}>
+    <title id={id}>{t('schema.sessAria')}</title>
+    <text x="0" y="12">{t('schema.sessVisitatore')}</text>
+    <text x="130" y="12">{t('schema.sessVisite')}</text>
+    {righe.map((r) => (
+      <g>
+        <line class="riga" x1="0" x2="640" y1={r.y + 15} y2={r.y + 15} />
+        <text x="0" y={r.y + 11}>{r.n}</text>
+        {Array.from({ length: r.accetta ? 3 : 2 }, (_, k) => <rect class={r.accetta ? 'contata' : 'persa'} x={130 + k * 30} y={r.y + 2} width="24" height="10" />)}
+      </g>
+    ))}
+  </svg>
+  <figcaption>{t('schema.sessDidascalia')}</figcaption>
+</figure>

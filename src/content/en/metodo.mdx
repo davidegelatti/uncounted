@@ -1,0 +1,288 @@
+---
+indice: true
+sezioni:
+  - { id: in-short, titolo: 'In short' }
+  - { id: what-is-missing, titolo: 'What is missing from the data' }
+  - { id: rate-not-per-session, titolo: 'The rate is not per session' }
+  - { id: banner-ignored, titolo: 'Visitors who ignore the banner' }
+  - { id: return-ratio, titolo: 'How often they come back' }
+  - { id: conversion-ratio, titolo: 'How well they convert' }
+  - { id: order-value-ratio, titolo: 'How much they spend per order' }
+  - { id: channels, titolo: 'Channels, devices, periods' }
+  - { id: users, titolo: 'Users' }
+  - { id: simulation, titolo: 'Where the range comes from' }
+  - { id: reading-ranges, titolo: 'How to read the range' }
+  - { id: consent-mode, titolo: 'Consent Mode and modeling' }
+  - { id: real-orders, titolo: 'Real orders' }
+  - { id: other-losses, titolo: 'Other losses' }
+  - { id: limits, titolo: 'Limits' }
+  - { id: sources, titolo: 'Sources' }
+---
+import Catena from '../../components/schemi/Catena.astro';
+import Imbuto from '../../components/schemi/Imbuto.astro';
+import Sessioni from '../../components/schemi/Sessioni.astro';
+import Albero from '../../components/schemi/Albero.astro';
+import Ventaglio from '../../components/schemi/Ventaglio.astro';
+import Ordini from '../../components/schemi/Ordini.astro';
+
+# The method
+
+This page explains where the estimator’s numbers come from. You don’t need it to use the estimator: you need it to decide how far to trust it.
+The full technical detail is in the `METODO.md` file of the publicly available source code (in Italian).
+
+<section id="in-short">
+
+## In short
+
+GA4 shows only the sessions of visitors who gave consent. About those who didn’t, it **knows nothing**: neither how many there were nor how they behaved.
+The estimator estimates the missing part like this:
+
+<Catena lingua="en" />
+
+Three things come from outside the data: your **consent rate**, a few **assumptions** about how visitors who don’t accept behave and, if you have them, the **real orders** from your order system.
+
+This leads to the most important point on the page: **the range you see reflects how uncertain the assumptions are, not how noisy the data is.**
+Uploading more days doesn’t narrow it. A more reliable consent rate, or real orders, does.
+
+</section>
+
+<section id="what-is-missing">
+
+## What is missing from the data
+
+<Imbuto lingua="en" />
+
+| Quantity | Can it be derived from the GA4 export? |
+|---|---|
+| How many visitors accept | **No.** You need the figure from your banner platform (CMP) |
+| How often visitors who don’t accept come back | **No.** Assumption |
+| How well visitors who don’t accept convert, and how much they spend | **No**, unless you have real orders |
+| How much consent varies between channels | **No.** Assumption, or CMP data |
+| Conversion rate and average order value of visitors who accept | **Yes**, with more noise where numbers are small |
+
+Only the last row comes from your data. Everything else is a stated assumption, with a range.
+
+The estimator estimates **only what is missing because of consent**. Traffic GA4 misses for other reasons (ad blockers, technical errors) is left out: see [Other losses](#other-losses).
+
+</section>
+
+<section id="rate-not-per-session">
+
+## The CMP rate is not a per-session rate
+
+Dividing sessions by the consent rate would be correct only if visitors who accept and visitors who don’t made the same number of visits. Usually they don’t.
+
+<Sessioni lingua="en" />
+
+**How** the CMP calculates the rate also matters:
+
+- **per visitor**: visitors who accepted divided by unique visitors. This is the best fit;
+- **per banner shown**: acceptances divided by the times the banner appeared. Visitors who accept never see the banner again, while those who ignore it see it on every visit: the rate comes out lower.
+
+Declaring the wrong measurement is costly: in the tests, a “per banner” rate declared “per visitor” inflates the estimated sessions by 19% ([Validation](/en/validation/#robustness)). That’s why the estimator asks, and accepts “I don’t know” by widening the range.
+
+</section>
+
+<section id="banner-ignored">
+
+## Visitors who ignore the banner
+
+Visitors who leave or keep browsing without touching the banner haven’t given consent: for GA4 that’s the same as declining.
+Many CMPs, however, calculate the rate only among visitors who clicked, and so overstate it.
+
+If your rate doesn’t include visitors who ignore the banner, the estimator corrects it with the share you enter; if you don’t know it, it assumes about 15%, with a wide range (4% to 43%). In the tests, not declaring it reduces the estimated sessions by 12%.
+
+</section>
+
+<section id="return-ratio">
+
+## How often they come back
+
+This is the ratio between visits per person for visitors who don’t accept and for those who do.
+
+| How the CMP measures | Starting value | Plausible range |
+|---|---|---|
+| Per visitor | 0.8 | 0.45 – 1.45 |
+| Per banner shown | 0.6 | 0.27 – 1.30 |
+| I don’t know | 0.7 | 0.27 – 1.80 |
+
+The reasoning: many visitors who don’t accept are just passing through, so on average they make fewer visits each; but the effect can also reverse, and the range goes above 1.
+**There are no solid public sources for this value: it’s a reasoned judgment.**
+
+</section>
+
+<section id="conversion-ratio">
+
+## How well they convert
+
+This is the ratio between the conversion rate of a visit without consent and that of a visit with consent. Starting value **0.4**, range 0.15 – 1.05.
+
+The only quantitative indication comes from Google: users who consent “typically” convert 2 to 5 times more, which means a ratio between 0.2 and 0.5. It is stated in the context of Google Ads conversion modeling, with no published data or method, and the same page warns that the gap “varies widely” by industry, consent rate and conversion type. That’s why the range is wider and reaches parity.
+Academic studies on the GDPR confirm the **direction** (those who remain trackable are a selected, higher-value group), not a number.
+
+If this assumption is wrong, orders and revenue are wrong: with a true value of 1.0, transactions are underestimated by 20%. The remedy is [real orders](#real-orders).
+
+</section>
+
+<section id="order-value-ratio">
+
+## How much they spend per order
+
+The ratio between the average order value of visitors who don’t accept and that of visitors who do. Starting value **1.0**, range 0.75 – 1.35: there’s no strong reason to expect a difference, and no source.
+
+</section>
+
+<section id="channels">
+
+## Channels, devices, periods
+
+A CMP usually gives a single rate. But visitors arriving from email or direct traffic generally accept more than those arriving from an ad.
+Without channel data, the estimator assumes each channel may differ from the overall rate in unpredictable ways while keeping the average: the **total** doesn’t change, but the range for each channel is wider.
+
+**This is the least solid part.** In tests with very different rates across channels (30% to 85%), the total stays correct, but the session range for a single channel contains the true value less than half the time. The estimator doesn’t ask for rates by channel: almost no CMP provides them. If a channel probably accepts much less than the others, read its figure as indicative.
+
+Different rates by **device** help calculate the overall rate more accurately (the export doesn’t contain the device). They matter mostly when desktop visitors accept more and also visit more often: with differences like those tested (50% consent on mobile and 75% on desktop, one and a half times the visits on desktop), the overall rate alone overestimates sessions by about 4%, even when declared precise; with bigger differences the error grows. With rates by device the error disappears; if visits are similar across devices, the overall rate is enough. A rate that changed **during the period**, for example after a new banner, is entered with the date of the change.
+
+</section>
+
+<section id="users">
+
+## Users: why they don’t add up
+
+- Adding up each day’s users counts returning visitors several times: that’s why the estimator calls them **user-days**.
+- **Unique users in the period** can’t be derived from the daily rows: the estimator reads them from the export’s total row, if there is one and it’s consistent; otherwise you read them in GA4 and enter them by hand.
+- For visitors who don’t accept, “user” has never been measured by anyone: without an identifier there’s no way to know whether two visits come from the same person. The estimate of unique users without consent is therefore the most fragile.
+
+</section>
+
+<section id="simulation">
+
+## Where the range comes from
+
+Each uncertain quantity doesn’t have a single value but a range of plausible values. The estimator repeats the calculation 4,000 times, drawing different values within those ranges each time (technically: a Bayesian model with Monte Carlo simulation), and looks at how the results are distributed.
+
+<Ventaglio lingua="en" />
+
+Two safeguards for small numbers:
+
+- a channel with three conversions doesn’t have “a rate”: it has an uncertain rate. It is pulled toward the site average, the more so the less data it has;
+- observed data is never changed: the uncertainty applies only to the added part.
+
+The same data and the same assumptions always give the same result.
+
+</section>
+
+<section id="reading-ranges">
+
+## How to read the range
+
+- **“Likely between X and Y”** is the range that contains 80% of the simulations: **8 times out of 10**.
+- **“Almost certainly between X and Y”** contains 95%: **19 times out of 20**.
+
+It isn’t a figure of speech. On test data with a known answer, the true value falls in the first range about 8 times out of 10 and in the second about 19 out of 20: the [Validation](/en/validation/#calibration) page shows it.
+
+There’s a condition: **it holds if the assumptions are right**. If one is wrong beyond its range, the true value can fall outside. How often, and by how much, is measured on the same page.
+
+</section>
+
+<section id="consent-mode">
+
+## Consent Mode and Google’s modeling
+
+With Consent Mode **Advanced**, above certain traffic thresholds, GA4 estimates traffic without consent on its own and adds it to reports. Free-form explorations, where the export comes from, **include** this estimated data. Adjusting it again would count it twice.
+
+<Albero lingua="en" />
+
+Advanced isn’t enough: it also takes at least 1,000 events per day without consent for 7 days, 1,000 users per day with consent on 7 of the previous 28 days, and the “Blended” reporting identity. Many small and mid-sized sites don’t get there.
+
+When modeling is active, the estimator stops. A comparison is still possible: exporting again with the “Device-based” reporting identity gives the observed data only, and you can see whether what Google added falls within the estimator’s range.
+
+</section>
+
+<section id="real-orders">
+
+## Real orders
+
+The difference between orders in your order system and GA4 transactions directly measures how many orders are missing. The estimator uses it to calibrate **how well they convert** (and, with revenue, **how much they spend**) instead of the starting assumption.
+
+| | Effect of real orders |
+|---|---|
+| Orders and revenue | **Very strong**: the range narrows a lot |
+| Other key events | Weak |
+| Sessions and users | **None** |
+
+Why none on sessions? Missing orders pin down a **product** (how many visits are missing × how well they convert), not the two factors: many visits that convert little and few visits that convert a lot explain the same orders. For sessions, the consent rate is what matters.
+
+**“Fewer (or more) orders are missing than your answers predict”** appears when, to explain the missing orders, “how well they convert” would have to fall outside its plausible range: too many orders are missing, or too few. Usually the period or scope of the orders doesn’t match GA4’s. In that case **real orders aren’t used**: transactions, revenue and key events go back to the estimate from the assumptions alone, and the estimator says so. For each other answer about the audience it reruns the same estimate, with the same criterion, and shows which ones would make the numbers add up.
+
+</section>
+
+<section id="other-losses">
+
+## Orders GA4 misses for other reasons
+
+Real orders tell you **how many** are missing, not **why**. Some are missing because of consent; others because GA4 wouldn’t have recorded them anyway: ad blockers and browsers that block Google Analytics, technical errors, untracked returns from the payment page.
+
+<Ordini lingua="en" />
+
+**Precise definition.** “Other reasons” is the share of real orders that GA4 doesn’t record and that do **not** come from visitors without consent. In practice:
+
+- orders from visitors who **accepted** cookies but have Google Analytics blocked, or hit a technical error;
+- orders from visitors who **never saw the banner**, because the blocker hides it too: the CMP counts them neither among those who accept nor among those who decline.
+
+An order from a visitor who blocks GA **and** declines cookies is counted only once, as “missing because of consent”: ad blocker users decline more often, and counting them here too would count them twice. That’s why the share is **lower** than the percentage of visitors who block GA.
+
+The estimator has no preset value: it asks what audience the site has.
+
+| Audience | Central value | Plausible range |
+|---|---|---|
+| Consumer, mostly mobile | 7% | 2.5% – 19% |
+| Technical or professional, mostly desktop | 20% | 8% – 50% |
+| Mixed / I don’t know | 9% | 2.5% – 32% |
+| Server-side tagging or own proxy | 2% | 0.6% – 6.5% |
+
+The values start from the few public measurements available (6% to 15% of visitors block GA on general-interest sites, 25% to 58% on technical ones), reduced for the overlap with visitors who decline and increased by a couple of points for technical errors. They are old measurements, on single sites and by interested vendors: treat them as an order of magnitude.
+
+**With real orders, the total depends almost entirely on this answer.** In the tests, with a true share of 20% and the answer “mixed / I don’t know”, the true value stays within the “almost certainly” range but the central estimate is 14% too high; with the wrong answer “consumer”, it falls outside two times out of three.
+
+**What about sessions?** Ad blockers have an effect even without real orders: the estimated session total doesn’t include visitors GA4 wouldn’t see even with consent. In the tests it stays below actual traffic by 2% with 12% of visitors blocking GA, and by 9% with 35%.
+
+</section>
+
+<section id="limits">
+
+## Limits
+
+- **It’s an estimate, not a measurement.** Change the assumptions and the results change.
+- **The range holds if the assumptions are right.**
+- **More days of data don’t make the estimate more precise.**
+- **It covers consent only.** Ad blockers and technical errors aren’t included.
+- **It assumes opt-in consent**, where tracking starts only after the visitor accepts (as in the EU and UK). Under opt-out rules, common in the United States, the default assumptions haven’t been tested.
+- **Don’t use it if GA4 is already modeling.**
+- **The channel breakdown is the least solid part**, and small channels have wide ranges.
+- **Declaring correctly how the rate is measured matters**: getting it wrong shifts sessions by 12% to 19%.
+- **User-days aren’t distinct people.**
+- **The traffic you don’t see isn’t the same as the traffic you see**: on average it converts less.
+- **With real orders**, orders and revenue depend on the audience type you choose.
+- **It isn’t suited to fine-grained decisions**: comparing two campaigns, reading an A/B test, moving budget to a minor channel.
+- **The starting values** of “how often they come back”, “how much they spend”, the share of visitors who ignore the banner and the variation across channels are reasoned judgments, without a solid public source.
+
+</section>
+
+<section id="sources">
+
+## Sources
+
+1. Google Analytics Help, *Behavioral modeling for consent mode*: modeling thresholds and the features that include it.
+2. Google Analytics Help, *Reporting identity*: the “Blended”, “Observed” and “Device-based” options; changing them has no permanent effect on the data.
+3. Google Ads Help, *About consent mode modeling*: “2–5x”.
+4. Aridor, Che, Salz, *The effect of privacy regulation on the data industry*, RAND Journal of Economics, 2023.
+5. Lin, Strulov-Shlain, *Choice architecture, privacy valuations, and selection bias in consumer data*, 2023.
+6. Measurements of Google Analytics blocking: M. Saric (June 2020, three sites: 13% overall, 6% to 26% depending on the type of site, 21% on desktop and 8% on mobile); Plausible Analytics (August 2021, one article trending on Hacker News: 58%, 68% on desktop and 50% on mobile); Practical Ecommerce (2017, about 210,000 visitors: from 13% on B2C sites to 42% on travel sites). They are measurements on a few sites, made by vendors of competing tools: treat them as an order of magnitude. No more recent independent measurements were found; for context, GWI estimates that in 2025 about 30% of internet users use an ad blocker at least some of the time, which doesn’t mean blocking GA.
+7. Brave, *Blocking cookie notices*: the browser hides cookie banners by default.
+
+Sources consulted on 15 Nov 2026.
+
+</section>
+
+<p><a class="btn primo" href="/en/estimator/">Start</a></p>

@@ -1,0 +1,29 @@
+---
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+// curva asimmetrica (log-normale) disegnata a punti
+const W = 720;
+const base = 150;
+const f = (u: number): number => Math.exp(-((Math.log(u) - Math.log(0.36)) ** 2) / (2 * 0.42 * 0.42)) / u;
+const max = f(0.3);
+const px = (u: number): number => 20 + u * (W - 40);
+const py = (u: number): number => base - (f(u) / max) * 120;
+const punti = Array.from({ length: 96 }, (_, i) => 0.04 + (i * 0.94) / 95);
+const curva = punti.map((u, i) => `${i ? 'L' : 'M'}${px(u).toFixed(1)},${py(u).toFixed(1)}`).join('');
+const area = (a: number, b: number): string => {
+  const p = punti.filter((u) => u >= a && u <= b);
+  return `M${px(a).toFixed(1)},${base}` + p.map((u) => `L${px(u).toFixed(1)},${py(u).toFixed(1)}`).join('') + `L${px(b).toFixed(1)},${base}Z`;
+};
+---
+<figure><svg class="schema" viewBox="0 0 720 200" role="img" aria-label={t('schema.ventaglioAria')}>
+  <path class="s-b95" d={area(0.16, 0.82)} /><path class="s-b80" d={area(0.21, 0.62)} />
+  <path class="s-curva" d={curva} /><path class="s-linea" d={`M20 ${base} H700`} />
+  <path class="s-linea" d={`M${px(0.36)} ${base} V${py(0.36)}`} />
+  <text class="forte" x={px(0.36)} y="18" text-anchor="middle">{t('schema.ventaglioCentrale')}</text>
+  <text x={px(0.41)} y="172" text-anchor="middle">{t('schema.ventaglio80')}</text>
+  <path class="s-linea" d={`M${px(0.21)} 160 H${px(0.62)}`} />
+  <text x={px(0.49)} y="194" text-anchor="middle">{t('schema.ventaglio95')}</text>
+  <path class="s-linea" d={`M${px(0.16)} 182 H${px(0.82)}`} />
+  <text class="s2" x="700" y="40" text-anchor="end">{t('schema.ventaglioRisultati')}</text>
+</svg></figure>

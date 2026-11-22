@@ -1,0 +1,76 @@
+---
+---
+
+# Privacy
+
+This page describes what the site does with your data and how you can check it yourself. It isn’t a legal privacy notice.
+
+<section id="what-happens">
+
+## What happens to your data
+
+The file you upload is read and processed **in your browser**. There’s no server that receives it: the site is made only of static pages and scripts, and the estimator has no address to send anything to.
+
+- **This site doesn’t set or read cookies.**
+- It uses no analytics, pixels or traffic measurement tools.
+- It loads nothing from other sites: fonts, icons and scripts are served from the same address as the pages.
+
+The site is on a subdomain of davidegelatti.com. Because of this, your browser may send cookies set by the main domain along with its requests, if you have any: the estimator doesn’t read or use them.
+
+</section>
+
+<section id="verify">
+
+## How to check
+
+You don’t have to trust this page. Three tests, with your browser’s developer tools:
+
+1. **Network tab.** Open it before uploading the file, then upload the file and calculate the estimate. The only requests go to the site’s own address, to load pages and code; none contains the file or the results, and none goes to other sites.
+2. **Offline mode.** Open the Estimator page: the browser downloads the calculation code together with the page. Then disconnect from the network (or choose “Offline” in the Network tab; the test also works with “Disable cache” on) and upload your file: the estimate is calculated, and you can change the assumptions, print or save as PDF and download the CSV. After disconnecting, no request appears in the Network tab.
+3. **The security rule.** The site gives the browser a rule (Content Security Policy) that forbids any connection to other addresses. To see it at work, type `fetch('https://example.com')` in the Console: the browser refuses the request and reports a violation of the `connect-src 'none'` rule. The same applies to any script on the page.
+
+The site’s source code is publicly available: you can read for yourself what it does, in the <a href="https://github.com/davidegelatti/uncounted" target="_blank" rel="noopener">GitHub repository<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (opens in a new tab)</span></a>.
+
+</section>
+
+<section id="stored">
+
+## What stays on your device
+
+None of your data, unless you turn on **“Remember the assumptions”**. In that case the browser keeps only answers and assumptions in its local storage (`localStorage`), to restore them on your next visit: never the file, orders or revenue. Unchecking the box deletes them.
+
+If you choose a theme (light or dark) with the button in the header, the browser remembers only that preference, in the same local storage. Switching back to “System” deletes it.
+
+The uploaded file stays in the page’s memory while the page is open. Closing or reloading it removes the file.
+
+</section>
+
+<section id="share-link">
+
+## What the link with assumptions contains
+
+“Copy link with assumptions” creates an address that holds **only answers and assumptions**: Consent Mode, consent rate and how it’s measured, the behavior assumptions, the audience type. **Never** the file, orders, revenue or users in the period.
+
+The assumptions come after the `#` sign in the address. That part stays in the browser: it isn’t sent to the server when someone opens the link.
+
+</section>
+
+<section id="hosting">
+
+## Hosting
+
+The site is hosted by **Cloudflare Pages**. Like any hosting service, Cloudflare logs page requests: IP address, page requested, browser. It doesn’t see the file, the calculations or the results, because they never leave the browser.
+
+The author sees only the aggregate statistics in the Cloudflare dashboard, such as the number of requests per day. There’s no analytics script on the site.
+
+</section>
+
+<section id="contact">
+
+## Contact
+
+Owner: Davide Gelatti.
+
+For privacy questions about this site: <a href="mailto:uncounted@davidegelatti.com">uncounted@davidegelatti.com</a>.
+
+</section>

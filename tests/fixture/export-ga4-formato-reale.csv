@@ -1,0 +1,20 @@
+# ----------------------------------------
+# Negozio di prova [GA4]
+# Formato libero-Formato libero 1
+# 20261018-20261020
+# ----------------------------------------
+
+Data,Gruppo di canali predefinito della sessione,Sessioni,Totale utenti,Eventi chiave,Transazioni,Entrate totali
+,,909,763,601,40,5991.6,Totale complessivo
+20261018,Direct,120,111,95,6,1180.4
+20261018,Organic Search,64,52,71,4,612
+20261018,Organic Shopping,1,1,2,0,0
+20261018,Paid Social,150,138,60,3,410.6
+20261019,AI Assistant,1,1,0,0,0
+20261019,Direct,131,122,88,5,975.2
+20261019,Organic Search,70,61,80,6,890.5
+20261019,Unassigned,2,2,0,0,0
+20261020,Direct,118,104,90,7,1012.3
+20261020,Organic Search,58,49,66,4,408.1
+20261020,Paid Other,3,3,1,0,0
+20261020,Paid Social,191,170,48,5,502.5

@@ -1,0 +1,76 @@
+---
+---
+
+# Privacy
+
+Questa pagina descrive cosa fa il sito con i tuoi dati e come puoi controllarlo da solo. Non è un’informativa legale.
+
+<section id="what-happens">
+
+## Cosa succede ai tuoi dati
+
+Il file che carichi è letto e calcolato **nel tuo browser**. Non c’è un server che lo riceve: il sito è fatto solo di pagine e script statici, e lo stimatore non ha un indirizzo a cui spedire qualcosa.
+
+- **Questo sito non imposta né legge cookie.**
+- Non usa analytics, pixel o strumenti di misurazione del traffico.
+- Non carica niente da altri siti: caratteri, icone e script sono serviti dallo stesso indirizzo delle pagine.
+
+Il sito sta su un sottodominio di davidegelatti.com. Per questo il browser può inviare insieme alle richieste i cookie impostati dal dominio principale, se ne hai: lo stimatore non li legge e non li usa.
+
+</section>
+
+<section id="verify">
+
+## Come verificarlo
+
+Non serve fidarsi di questa pagina. Tre prove, con gli strumenti per sviluppatori del browser:
+
+1. **Scheda Rete.** Aprila prima di caricare il file, poi carica il file e calcola la stima. Le uniche richieste vanno all’indirizzo del sito, per scaricare pagine e codice; nessuna contiene il file o i risultati, e nessuna va verso altri siti.
+2. **Modalità offline.** Apri la pagina dello Stimatore: insieme alla pagina il browser scarica anche il codice di calcolo. Poi scollega la rete (o scegli «Offline» nella scheda Rete; la prova vale anche con «Disattiva cache» attivo) e carica il tuo file: la stima si calcola, puoi cambiare le ipotesi, stampare o salvare in PDF e scaricare il CSV. Nella scheda Rete, dopo lo scollegamento, non compare nessuna richiesta.
+3. **La regola di sicurezza.** Il sito dichiara al browser una regola (Content Security Policy) che vieta qualsiasi connessione verso altri indirizzi. Per vederla all’opera, scrivi nella Console `fetch('https://example.com')`: il browser rifiuta la richiesta e segnala la violazione della regola `connect-src 'none'`. Lo stesso vale per qualsiasi script della pagina.
+
+Il codice del sito è pubblico e consultabile: puoi leggere tu stesso cosa fa, nel <a href="https://github.com/davidegelatti/uncounted" target="_blank" rel="noopener">repository su GitHub<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (si apre in una nuova scheda)</span></a>.
+
+</section>
+
+<section id="stored">
+
+## Cosa resta sul dispositivo
+
+Nessun dato tuo, se non attivi **«Ricorda le ipotesi»**. In quel caso il browser conserva nel suo archivio locale (`localStorage`) solo le risposte e le ipotesi, per ritrovarle alla prossima visita: mai il file, gli ordini o le entrate. Togliendo la spunta l’archivio viene cancellato.
+
+Se scegli un tema (chiaro o scuro) con il pulsante nella testata, il browser ricorda solo quella preferenza, nello stesso archivio locale. Tornando a «Sistema» la preferenza viene cancellata.
+
+Il file caricato resta nella memoria della pagina finché la tieni aperta. Chiudendola o ricaricandola sparisce.
+
+</section>
+
+<section id="share-link">
+
+## Cosa contiene il link con le ipotesi
+
+«Copia il link con le ipotesi» crea un indirizzo che contiene **solo risposte e ipotesi**: Consent Mode, tasso di accettazione e come è misurato, le ipotesi sul comportamento, il tipo di pubblico. **Mai** il file, gli ordini, le entrate o gli utenti del periodo.
+
+Le ipotesi stanno dopo il simbolo `#` dell’indirizzo. Quella parte resta nel browser: non viene inviata al server quando qualcuno apre il link.
+
+</section>
+
+<section id="hosting">
+
+## Hosting
+
+Il sito è ospitato da **Cloudflare Pages**. Come qualsiasi servizio di hosting, Cloudflare registra le richieste delle pagine: l’indirizzo IP, la pagina richiesta, il browser. Non vede il file, i calcoli o i risultati, perché non escono dal browser.
+
+L’autore vede soltanto le statistiche aggregate del pannello di Cloudflare, come il numero di richieste per giorno. Sul sito non c’è nessuno script di analytics.
+
+</section>
+
+<section id="contact">
+
+## Contatti
+
+Titolare: Davide Gelatti.
+
+Per domande sulla privacy di questo sito: <a href="mailto:uncounted@davidegelatti.com">uncounted@davidegelatti.com</a>.
+
+</section>

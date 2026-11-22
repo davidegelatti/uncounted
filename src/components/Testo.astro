@@ -1,0 +1,7 @@
+---
+// Un testo dai file di lingua dentro una pagina MDX (con la marcatura che contiene, per esempio <strong>).
+import { traduttore, type Lingua } from '../i18n/indice';
+const { lingua, k } = Astro.props as { lingua: Lingua; k: string };
+---
+
+<Fragment set:html={traduttore(lingua)(k)} />

@@ -1,0 +1,82 @@
+---
+---
+
+# How it was made
+
+Uncounted was designed and written with Claude, Anthropic’s AI model, under the direction of a person who made the decisions. This page explains who did what and what still needs checking.
+
+<section id="why">
+
+## Why it exists
+
+With a cookie banner, GA4 records only visitors who accept. Visitors who decline or ignore the banner don’t appear in reports, and those who accept are usually not a random sample: they come back more often and buy more. GA4’s numbers are therefore lower than the actual traffic, but not by a share that is easy to calculate.
+
+Google’s modeling fills the gap only under certain conditions, and many properties don’t meet them. Estimates made by hand, on the other hand, usually divide by the consent rate and return a single number, without saying how uncertain it is. Uncounted was built to give an estimate with its range, stated assumptions and no data leaving the browser.
+
+</section>
+
+<section id="who-did-what">
+
+## Who did what
+
+**Davide Gelatti** (Digital Analyst) had the idea, wrote the requirements, chose among the proposed options and approved each phase before moving to the next.
+
+**Claude**, in Claude Code:
+
+- **Claude Fable 5.2** developed the statistical method, the calculation engine code, the validation and the interface design;
+- **Claude Opus 5.5** handled the visual system, the page content, the English translation and the preparation for publishing.
+
+The work went in phases. Each phase ended with a document or a prototype, and the next phase started only after the author’s explicit approval, often with corrections. For example, the method was written and discussed in full in a document before any code was written; the visual system was chosen from three different directions, shown as prototypes.
+
+</section>
+
+<section id="how-validated">
+
+## How it was tested
+
+The method wasn’t tested on real data, because in real data the traffic of visitors who don’t accept can’t be known. It was tested on **synthetic data**: a generator simulates each visitor, produces an export like GA4’s and keeps the right answer. Each scenario is repeated 500 times, counting how often the estimator’s range contains the true value.
+
+Some scenarios follow the estimator’s assumptions; others break them on purpose, to measure what a wrong assumption costs. An automated test also checks that the engine returns the same numbers, digit for digit, after every code change.
+
+The full results, including the unfavorable ones, are on the [Validation](/en/validation/) page.
+
+</section>
+
+<section id="decisions">
+
+## The author’s decisions
+
+Some choices changed the method or the interface. They were proposed with their pros and cons and decided by the author:
+
+- **Real orders without reweighting.** The first method also used the orders from the order system to correct the other assumptions after the fact. On synthetic data, with one wrong assumption, this shifted the session estimate by up to 12%. Now real orders correct only orders and revenue: the estimate is more robust, at the cost of giving up the little they would say about sessions.
+- **The audience question.** Some of the orders missing from GA4 don’t depend on consent but on ad blockers and browsers that block Google Analytics. Instead of ignoring them, the estimator asks what audience the site has and states the share it uses.
+- **No values preset without the user knowing.** What the user can know starts empty. What nobody can know has a starting value, marked “Default” until you confirm or change it.
+- **No data outside the browser.** This was the author’s requirement from the start: no server, no analytics, no third-party resources, even at the cost of convenient features such as saving online.
+
+</section>
+
+<section id="limits">
+
+## Limits of this way of working
+
+- The code and the text were written by a model. The author reviewed and approved each phase; the correctness of the calculation relies mainly on the validation and the automated tests.
+- The validation shows that the method keeps its promises **if the assumptions are reasonable**. It doesn’t show that the default assumptions hold for any particular site.
+- The ad blocker values come from a few public measurements, some of them years old. They are stated as assumptions, with a wide range.
+- The instructions for banner platforms are based on their official documentation, where it could be consulted; menus change often.
+- GA4 names are those in Google’s documentation. The interface may differ slightly.
+
+If you find a mistake, please report it: see [Privacy → Contact](/en/privacy/#contact).
+
+</section>
+
+<section id="code">
+
+## The code
+
+The source code is publicly available in the <a href="https://github.com/davidegelatti/uncounted" target="_blank" rel="noopener">GitHub repository<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (opens in a new tab)</span></a>, together with the synthetic data generator, so the validation can be rerun from scratch.
+
+The <a href="https://github.com/davidegelatti/uncounted/blob/main/LICENSE.md" target="_blank" rel="noopener">license<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (opens in a new tab)</span></a> is simple: you can read and run it to verify it; you can’t reuse it.
+
+Google Analytics is a trademark of Google LLC. Uncounted is an independent project, not affiliated with Google.
+
+</section>

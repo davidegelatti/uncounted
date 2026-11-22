@@ -1,0 +1,288 @@
+---
+indice: true
+sezioni:
+  - { id: in-short, titolo: In breve }
+  - { id: what-is-missing, titolo: Cosa manca nei dati }
+  - { id: rate-not-per-session, titolo: Il tasso non è per sessione }
+  - { id: banner-ignored, titolo: Chi ignora il banner }
+  - { id: return-ratio, titolo: Quante volte ritorna }
+  - { id: conversion-ratio, titolo: Quanto converte }
+  - { id: order-value-ratio, titolo: Quanto spende per ordine }
+  - { id: channels, titolo: 'Canali, dispositivi, periodi' }
+  - { id: users, titolo: Utenti }
+  - { id: simulation, titolo: Come nasce l’intervallo }
+  - { id: reading-ranges, titolo: Come leggere l’intervallo }
+  - { id: consent-mode, titolo: Consent Mode e modellazione }
+  - { id: real-orders, titolo: Ordini reali }
+  - { id: other-losses, titolo: Altre perdite }
+  - { id: limits, titolo: Limiti }
+  - { id: sources, titolo: Fonti }
+---
+import Catena from '../../components/schemi/Catena.astro';
+import Imbuto from '../../components/schemi/Imbuto.astro';
+import Sessioni from '../../components/schemi/Sessioni.astro';
+import Albero from '../../components/schemi/Albero.astro';
+import Ventaglio from '../../components/schemi/Ventaglio.astro';
+import Ordini from '../../components/schemi/Ordini.astro';
+
+# Il metodo
+
+Questa pagina spiega da dove vengono i numeri dello stimatore. Non serve per usarlo: serve per decidere quanto fidarsi.
+Chi vuole il dettaglio tecnico completo lo trova nel file `METODO.md` del codice, pubblico e consultabile.
+
+<section id="in-short">
+
+## In breve
+
+GA4 mostra solo le sessioni di chi ha dato il consenso. Di chi non l’ha dato **non sa nulla**: né quanti erano, né come si sono comportati.
+Lo stimatore stima la parte mancante così:
+
+<Catena lingua="it" />
+
+Tre cose vengono da fuori dei dati: il tuo **tasso di accettazione**, alcune **ipotesi** su come si comporta chi non accetta e, se li hai, gli **ordini reali** del gestionale.
+
+Ne segue il punto più importante di tutta la pagina: **l’intervallo che vedi dice quanto sono incerte le ipotesi, non quanto sono rumorosi i dati.**
+Caricare più giorni non lo restringe. Un tasso di accettazione più affidabile, o gli ordini reali, sì.
+
+</section>
+
+<section id="what-is-missing">
+
+## Cosa manca nei dati
+
+<Imbuto lingua="it" />
+
+| Grandezza | Si può ricavare dall’export di GA4? |
+|---|---|
+| Quanti visitatori accettano | **No.** Serve il dato della piattaforma del banner (CMP) |
+| Quante volte ritorna chi non accetta | **No.** Ipotesi |
+| Quanto converte e quanto spende chi non accetta | **No**, a meno di avere gli ordini reali |
+| Quanto varia il consenso tra un canale e l’altro | **No.** Ipotesi, oppure dato della CMP |
+| Tasso di conversione e scontrino medio di chi accetta | **Sì**, con più rumore dove i numeri sono piccoli |
+
+Solo l’ultima riga viene dai tuoi dati. Tutto il resto è un’ipotesi dichiarata, con un margine.
+
+Lo stimatore stima **solo ciò che si perde per il mancato consenso**. Il traffico che GA4 perde per altre ragioni (ad blocker, errori tecnici) resta fuori: vedi [Altre perdite](#other-losses).
+
+</section>
+
+<section id="rate-not-per-session">
+
+## Il tasso della CMP non è un tasso per sessione
+
+Dividere le sessioni per il tasso di accettazione sarebbe corretto solo se chi accetta e chi non accetta facessero lo stesso numero di visite. Di solito non è così.
+
+<Sessioni lingua="it" />
+
+Conta anche **come** la CMP calcola il tasso:
+
+- **per visitatore**: chi ha accettato diviso i visitatori unici. È la misura più adatta;
+- **per banner mostrato**: accettazioni divise per le volte in cui il banner è apparso. Chi accetta non rivede più il banner, mentre chi lo ignora lo rivede a ogni visita: il tasso risulta più basso.
+
+Dichiarare la misura sbagliata costa caro: nelle prove, un tasso «per banner» dichiarato «per visitatore» gonfia le sessioni stimate del 19% ([Validazione](/it/validazione/#robustness)). Per questo lo stimatore lo chiede, e accetta «non lo so» allargando l’intervallo.
+
+</section>
+
+<section id="banner-ignored">
+
+## Chi ignora il banner
+
+Chi chiude la pagina o naviga senza toccare il banner non ha dato il consenso: per GA4 equivale a un rifiuto.
+Molte CMP però calcolano il tasso solo tra chi ha cliccato, e così lo sovrastimano.
+
+Se il tuo tasso non comprende chi ignora, lo stimatore lo corregge con la quota che indichi; se non la conosci assume circa il 15%, con un margine ampio (dal 4% al 43%). Nelle prove, non dichiararlo riduce le sessioni stimate del 12%.
+
+</section>
+
+<section id="return-ratio">
+
+## Quante volte ritorna
+
+È il rapporto tra le visite per persona di chi non accetta e quelle di chi accetta.
+
+| Come misura la CMP | Valore iniziale | Margine plausibile |
+|---|---|---|
+| Per visitatore | 0,8 | 0,45 – 1,45 |
+| Per banner mostrato | 0,6 | 0,27 – 1,30 |
+| Non lo so | 0,7 | 0,27 – 1,80 |
+
+Il ragionamento: tra chi non accetta ci sono molti visitatori di passaggio, quindi in media meno visite a testa; ma l’effetto può anche invertirsi, e il margine supera 1.
+**Non esistono fonti pubbliche solide su questo valore: è un giudizio ragionato.**
+
+</section>
+
+<section id="conversion-ratio">
+
+## Quanto converte
+
+È il rapporto tra il tasso di conversione di una visita senza consenso e quello di una visita con consenso. Valore iniziale **0,4**, margine 0,15 – 1,05.
+
+L’unica indicazione quantitativa è di Google: chi dà il consenso converte «tipicamente da 2 a 5 volte» di più, cioè un rapporto tra 0,2 e 0,5. È detta nel contesto della modellazione delle conversioni di Google Ads, senza dati né metodo pubblicati, e la stessa pagina avverte che il divario «varia molto» secondo settore, tasso di consenso e tipo di conversione. Per questo il margine è più largo e arriva alla parità.
+Gli studi accademici sul GDPR confermano la **direzione** (chi resta tracciabile è un gruppo selezionato e di maggior valore), non un numero.
+
+Se questa ipotesi è sbagliata, sono sbagliati ordini ed entrate: con un valore vero di 1,0 le transazioni risultano sottostimate del 20%. Il rimedio sono gli [ordini reali](#real-orders).
+
+</section>
+
+<section id="order-value-ratio">
+
+## Quanto spende per ordine
+
+Rapporto tra lo scontrino medio di chi non accetta e quello di chi accetta. Valore iniziale **1,0**, margine 0,75 – 1,35: non ci sono ragioni forti per aspettarsi una differenza, e nessuna fonte.
+
+</section>
+
+<section id="channels">
+
+## Canali, dispositivi, periodi
+
+La CMP di solito dà un solo tasso. Ma chi arriva da email o traffico diretto accetta in genere più di chi arriva da un annuncio.
+Senza dati per canale lo stimatore assume che ogni canale possa discostarsi dal tasso globale in modo imprevedibile, mantenendo la media: il **totale** non cambia, ma l’intervallo dei singoli canali è più largo.
+
+**È la parte meno solida.** Nelle prove con tassi molto diversi tra canali (dal 30% all’85%) il totale resta corretto, ma l’intervallo delle sessioni del singolo canale contiene il valore vero meno di una volta su due. Lo stimatore non chiede i tassi per canale: quasi nessuna CMP li fornisce. Se un canale probabilmente accetta molto meno degli altri, il suo dato va letto come indicativo.
+
+Tassi diversi per **dispositivo** servono a calcolare meglio il tasso complessivo (l’export non contiene il dispositivo). Contano soprattutto se chi usa il desktop accetta di più e fa anche più visite: con differenze come quelle provate (consenso 50% su mobile e 75% su desktop, una volta e mezza le visite su desktop) il solo tasso globale sovrastima le sessioni di circa il 4%, anche se dichiarato preciso; con differenze maggiori l’errore cresce. Con i tassi per dispositivo l’errore sparisce; se le visite sono simili tra dispositivi, il tasso globale basta. Un tasso cambiato **nel periodo**, per esempio dopo un nuovo banner, si indica con la data del cambio.
+
+</section>
+
+<section id="users">
+
+## Utenti: perché non si sommano
+
+- Sommare gli utenti di ogni giorno conta più volte chi torna: per questo lo stimatore li chiama **utenti-giorno**.
+- Gli **utenti unici del periodo** non si possono ricavare dalle righe per giorno: lo stimatore li legge dalla riga dei totali dell’export, se c’è ed è coerente; altrimenti vanno letti in GA4 e scritti a mano.
+- Per chi non accetta, «utente» non è mai stato misurato da nessuno: senza identificatore non si può sapere se due visite sono della stessa persona. La stima degli utenti unici senza consenso è quindi la più fragile.
+
+</section>
+
+<section id="simulation">
+
+## Come nasce l’intervallo
+
+Ogni grandezza incerta non ha un solo valore, ma un margine di valori plausibili. Lo stimatore ripete il calcolo 4.000 volte, pescando ogni volta valori diversi dentro quei margini (tecnicamente: un modello bayesiano con simulazione Monte Carlo), e guarda come si distribuiscono i risultati.
+
+<Ventaglio lingua="it" />
+
+Due accorgimenti per i numeri piccoli:
+
+- un canale con tre conversioni non ha «un tasso»: ha un tasso incerto. Viene avvicinato alla media del sito, tanto più quanto meno dati ha;
+- i dati osservati non vengono mai modificati: l’incertezza riguarda solo la parte aggiunta.
+
+Stessi dati e stesse ipotesi danno sempre lo stesso risultato.
+
+</section>
+
+<section id="reading-ranges">
+
+## Come leggere l’intervallo
+
+- **«Probabilmente tra X e Y»** è l’intervallo che contiene l’80% delle simulazioni: **8 volte su 10**.
+- **«Quasi certamente tra X e Y»** contiene il 95%: **19 volte su 20**.
+
+Non è un modo di dire. Su dati di prova di cui si conosce la risposta, il valore vero cade nel primo intervallo circa 8 volte su 10 e nel secondo circa 19 su 20: lo mostra la pagina [Validazione](/it/validazione/#calibration).
+
+C’è una condizione: **vale se le ipotesi sono giuste**. Se una è sbagliata oltre il suo margine, il valore vero può cadere fuori. Quanto spesso, e di quanto, è misurato nella stessa pagina.
+
+</section>
+
+<section id="consent-mode">
+
+## Consent Mode e modellazione di Google
+
+Con Consent Mode **Advanced**, sopra certe soglie di traffico, GA4 stima da sé il traffico senza consenso e lo aggiunge ai report. Le esplorazioni in formato libero, da cui viene l’export, **includono** questi dati stimati. Correggerli di nuovo li conterebbe due volte.
+
+<Albero lingua="it" />
+
+Advanced non basta: servono almeno 1.000 eventi al giorno senza consenso per 7 giorni, 1.000 utenti al giorno con consenso in 7 degli ultimi 28 giorni, e l’identità report «Combinato» (Blended). Molti siti medi e piccoli non ci arrivano.
+
+Quando la modellazione è attiva lo stimatore si ferma. Resta possibile un confronto: riesportando con identità report «Basato sul dispositivo» si ottengono i soli dati osservati, e si può vedere se ciò che Google ha aggiunto cade dentro l’intervallo dello stimatore.
+
+</section>
+
+<section id="real-orders">
+
+## Ordini reali
+
+La differenza tra gli ordini del gestionale e le transazioni di GA4 misura direttamente quanti ordini mancano. Lo stimatore la usa per calibrare **quanto converte** (e, con le entrate, **quanto spende**) al posto dell’ipotesi iniziale.
+
+| | Effetto degli ordini reali |
+|---|---|
+| Ordini ed entrate | **Molto forte**: l’intervallo si restringe molto |
+| Altri eventi chiave | Debole |
+| Sessioni e utenti | **Nessuno** |
+
+Perché nessuno sulle sessioni? Gli ordini mancanti fissano un **prodotto** (quante visite mancano × quanto convertono), non i due fattori: molte visite che convertono poco e poche visite che convertono molto spiegano gli stessi ordini. Per le sessioni conta il tasso di accettazione.
+
+**«Mancano meno (o più) ordini di quanto prevedono le tue risposte»** compare quando, per spiegare gli ordini mancanti, «quanto converte» dovrebbe uscire dal margine plausibile: mancano troppi ordini, oppure troppo pochi. Di solito il periodo o il perimetro degli ordini non coincidono con quelli di GA4. In quel caso **gli ordini reali non vengono usati**: transazioni, entrate ed eventi chiave tornano alla stima fatta con le sole ipotesi, e lo stimatore lo dice. Per ogni altra risposta sul tipo di pubblico rifà la stessa stima, con lo stesso criterio, e indica con quali i conti tornerebbero.
+
+</section>
+
+<section id="other-losses">
+
+## Ordini che GA4 perde per altre cause
+
+Gli ordini reali dicono **quanti** ne mancano, non **perché**. Una parte manca per il consenso; un’altra perché GA4 non l’avrebbe registrata comunque: ad blocker e browser che bloccano Google Analytics, errori tecnici, ritorni dal pagamento non tracciati.
+
+<Ordini lingua="it" />
+
+**Definizione precisa.** «Altre cause» è la quota degli ordini reali che GA4 non registra e che **non** vengono da visitatori senza consenso. In pratica:
+
+- ordini di chi **ha accettato** i cookie ma ha Google Analytics bloccato, o è incappato in un errore tecnico;
+- ordini di chi **non ha mai visto il banner**, perché il blocker nasconde anche quello: la CMP non li conta né tra chi accetta né tra chi rifiuta.
+
+Un ordine di chi blocca GA **e** rifiuta i cookie è contato una volta sola, tra i «persi per il consenso»: chi usa un ad blocker rifiuta più spesso, e contarlo anche qui lo conterebbe due volte. Per questo la quota è **più bassa** della percentuale di visitatori che bloccano GA.
+
+Lo stimatore non ha un valore preimpostato: chiede che pubblico ha il sito.
+
+| Pubblico | Valore centrale | Margine plausibile |
+|---|---|---|
+| Largo consumo, soprattutto mobile | 7% | 2,5% – 19% |
+| Tecnico o professionale, soprattutto desktop | 20% | 8% – 50% |
+| Misto / non lo so | 9% | 2,5% – 32% |
+| Tagging lato server o proxy proprio | 2% | 0,6% – 6,5% |
+
+I valori partono dalle poche misure pubbliche disponibili (tra il 6% e il 15% dei visitatori blocca GA sui siti generalisti, dal 25% al 58% su quelli tecnici), ridotte per la sovrapposizione con chi rifiuta e aumentate di un paio di punti per gli errori tecnici. Sono misure vecchie, su singoli siti e di fornitori interessati: valgono come ordine di grandezza.
+
+**Con gli ordini reali il totale dipende quasi solo da questa risposta.** Nelle prove, con una quota vera del 20% e la risposta «misto / non lo so», il valore vero resta dentro l’intervallo «quasi certamente» ma la stima centrale è alta del 14%; con la risposta sbagliata «largo consumo» cade fuori due volte su tre.
+
+**E le sessioni?** Gli ad blocker hanno un effetto anche senza ordini reali: il totale stimato delle sessioni non comprende i visitatori che GA4 non vedrebbe nemmeno con il consenso. Nelle prove resta sotto il traffico reale del 2% con il 12% di visitatori che bloccano GA, e del 9% con il 35%.
+
+</section>
+
+<section id="limits">
+
+## Limiti
+
+- **È una stima, non una misura.** Cambiando le ipotesi cambiano i risultati.
+- **L’intervallo vale se le ipotesi sono giuste.**
+- **Più giorni di dati non rendono la stima più precisa.**
+- **Riguarda solo il consenso.** Ad blocker ed errori tecnici non sono compresi.
+- **Presuppone il consenso preventivo (opt-in)**: il tracciamento parte solo dopo l’accettazione, come nell’Unione europea e nel Regno Unito. Con regole di opposizione successiva (opt-out), diffuse negli Stati Uniti, le ipotesi predefinite non sono state provate.
+- **Se GA4 sta già modellando, non va usata.**
+- **Il dettaglio per canale è la parte meno solida**, e i canali piccoli hanno intervalli larghi.
+- **Dichiarare bene come è misurato il tasso conta**: sbagliare sposta le sessioni dal 12% al 19%.
+- **Gli utenti-giorno non sono persone distinte.**
+- **Il traffico che non vedi non è uguale a quello che vedi**: in media converte meno.
+- **Con gli ordini reali**, ordini ed entrate dipendono dal tipo di pubblico indicato.
+- **Non è adatta a decisioni di dettaglio**: confrontare due campagne, leggere un test A/B, spostare budget su un canale minore.
+- **I valori iniziali** di «quante volte ritorna», «quanto spende», della quota di chi ignora il banner e della variazione tra canali sono giudizi ragionati, senza una fonte pubblica solida.
+
+</section>
+
+<section id="sources">
+
+## Fonti
+
+1. Google Analytics Help, *Behavioral modeling for consent mode*: soglie della modellazione e funzioni che la includono.
+2. Google Analytics Help, *Identità report*: opzioni «Combinato», «In osservazione», «Basato sul dispositivo»; cambiarle non ha effetti permanenti sui dati.
+3. Google Ads Help, *About consent mode modeling*: «2–5 volte».
+4. Aridor, Che, Salz, *The effect of privacy regulation on the data industry*, RAND Journal of Economics, 2023.
+5. Lin, Strulov-Shlain, *Choice architecture, privacy valuations, and selection bias in consumer data*, 2023.
+6. Misure sul blocco di Google Analytics: M. Saric (giugno 2020, tre siti: 13% complessivo, dal 6% al 26% secondo il tipo di sito, 21% da desktop e 8% da mobile); Plausible Analytics (agosto 2021, un articolo in tendenza su Hacker News: 58%, 68% da desktop e 50% da mobile); Practical Ecommerce (2017, circa 210.000 visitatori: dal 13% dei siti B2C al 42% dei siti di viaggio). Sono misure su pochi siti, fatte da fornitori di strumenti concorrenti: valgono come ordine di grandezza. Non risultano misure indipendenti più recenti; come contesto, GWI stima che nel 2025 circa il 30% degli utenti internet usi un ad blocker almeno qualche volta, che non significa bloccare GA.
+7. Brave, *Blocking cookie notices*: il browser nasconde di default i banner dei cookie.
+
+Fonti consultate il 15 novembre 2026.
+
+</section>
+
+<p><a class="btn primo" href="/it/stimatore/">Inizia</a></p>

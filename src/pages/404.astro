@@ -1,0 +1,28 @@
+---
+import '../styles/font.css';
+import '../styles/sito.css';
+import sito from '../../sito.config.json';
+import { traduttore } from '../i18n/indice';
+const it = traduttore('it');
+const en = traduttore('en');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>404 · {sito.nomeProgetto}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main class="centro">
+      <h1>404</h1>
+      <p lang="it">{it('e404.testo')} <a href="/it/">{it('e404.torna')}</a></p>
+      <p lang="en">{en('e404.testo')} <a href="/en/">{en('e404.torna')}</a></p>
+    </main>
+  </body>
+</html>

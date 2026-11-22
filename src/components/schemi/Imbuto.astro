@@ -1,0 +1,15 @@
+---
+import { traduttore, type Lingua } from '../../i18n/indice';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+---
+<figure><svg class="schema" viewBox="0 0 720 170" role="img" aria-label={t('schema.imbutoAria')}>
+  <rect class="s-oss" x="4" y="58" width="150" height="54" rx="10"/><text class="forte" x="79" y="90" text-anchor="middle">{t('schema.visitatori')}</text>
+  <path class="s-linea" d="M154 85 C200 85 200 34 250 34 M154 85 H250 M154 85 C200 85 200 136 250 136"/>
+  <rect class="s-verde" x="250" y="10" width="210" height="46" rx="10"/><text class="forte" x="355" y="38" text-anchor="middle">{t('schema.accettano')}</text>
+  <rect class="s-rosso" x="250" y="62" width="210" height="46" rx="10"/><text class="forte" x="355" y="90" text-anchor="middle">{t('schema.rifiutano')}</text>
+  <rect class="s-ambra" x="250" y="114" width="210" height="46" rx="10"/><text class="forte" x="355" y="142" text-anchor="middle">{t('schema.ignorano')}</text>
+  <path class="s-linea" d="M460 33 H520 M460 85 H500 V137 M460 137 H520"/>
+  <rect class="s-blu" x="520" y="10" width="196" height="46" rx="10"/><text class="forte" x="618" y="38" text-anchor="middle">{t('schema.ga4Vede')}</text>
+  <rect class="s-oss" x="520" y="114" width="196" height="46" rx="10"/><text class="forte" x="618" y="142" text-anchor="middle">{t('schema.ga4NonVede')}</text>
+</svg></figure>

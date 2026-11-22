@@ -1,0 +1,44 @@
+---
+// Sezione iniziale della home: 100 visite come cerchi, in una griglia 20×5 (10×10 su mobile). Grigio pieno = contate
+// da GA4; contorno cobalto tratteggiato = senza consenso; al confine alcune unità «incerte» (riempimento parziale e
+// contorno tratteggiato), perché la quota dipende dalle ipotesi. Il cursore del tasso di accettazione aggiorna tutto (src/home/griglia-interattiva.ts).
+// Senza JavaScript la figura resta ferma sul 60% e il cursore non compare.
+import { traduttore, type Lingua } from '../../i18n/indice';
+import { DISPOSIZIONI, PASSO, RAGGIO, TASSO_INIZIALE, esito, testi, unita } from '../../home/modello-griglia';
+const { lingua } = Astro.props as { lingua: Lingua };
+const t = traduttore(lingua);
+const e = esito(TASSO_INIZIALE);
+const modelli = { semplice: t('griglia.semplice'), stima: t('griglia.stima'), descrizione: t('griglia.descrizione'), cursore: t('griglia.cursore') };
+const iniziali = testi(e, modelli);
+const figure = (Object.keys(DISPOSIZIONI) as (keyof typeof DISPOSIZIONI)[]).map((nome) => {
+  const { colonne, righe } = DISPOSIZIONI[nome];
+  const celle = Array.from({ length: 100 }, (_, i) => ({ cx: (i % colonne) * PASSO + PASSO / 2, cy: Math.floor(i / colonne) * PASSO + PASSO / 2, ...unita(i + 1, e) }));
+  return { nome, celle, larghezza: colonne * PASSO, altezza: righe * PASSO };
+});
+const id = `griglia-${lingua}`;
+---
+
+<div class="griglia-eroe" data-griglia data-semplice={modelli.semplice} data-stima={modelli.stima} data-descrizione={modelli.descrizione} data-cursore={modelli.cursore}>
+  {figure.map((f) => (
+    <svg class={`fig-registro griglia-svg griglia-${f.nome}`} viewBox={`0 0 ${f.larghezza} ${f.altezza}`} role="img" aria-describedby={`${id}-d`}>
+      <title>{t('griglia.titolo')}</title>
+      {f.celle.map((c) => (c.peso === undefined
+        ? <circle class={c.tipo} cx={c.cx} cy={c.cy} r={RAGGIO} />
+        : <circle class={c.tipo} cx={c.cx} cy={c.cy} r={RAGGIO} fill-opacity={c.peso.toFixed(2)} />))}
+    </svg>
+  ))}
+  <p id={`${id}-d`} class="nascosto-vis" data-campo="descrizione">{iniziali.descrizione}</p>
+  <div class="griglia-controllo" hidden>
+    <label for={`${id}-tasso`}><span>{t('griglia.tasso')}</span><output for={`${id}-tasso`}>{TASSO_INIZIALE}%</output></label>
+    <input id={`${id}-tasso`} type="range" min="10" max="95" step="1" value={TASSO_INIZIALE} aria-valuetext={iniziali.cursore} />
+  </div>
+  <dl class="griglia-confronto">
+    <dt>{t('griglia.sempliceEtichetta')}</dt><dd data-campo="semplice">{iniziali.semplice}</dd>
+    <dt>{t('griglia.stimaEtichetta')}</dt><dd class="stima-t" data-campo="stima">{iniziali.stima}</dd>
+  </dl>
+  <p class="fig-nota">{t('griglia.nota')}</p>
+  <p class="nascosto-vis" aria-live="polite" data-campo="annuncio"></p>
+</div>
+<script>
+  import '../../home/griglia-interattiva.ts';
+</script>

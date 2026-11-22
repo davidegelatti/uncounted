@@ -1,0 +1,102 @@
+---
+indice: true
+sezioni:
+  - { id: how, titolo: Come si verifica una stima }
+  - { id: calibration, titolo: 'Calibrazione: «8 volte su 10» è vero?' }
+  - { id: robustness, titolo: 'Robustezza: quanto costa un’ipotesi sbagliata' }
+  - { id: ad-blockers, titolo: Ad blocker e ordini reali }
+  - { id: reading, titolo: Cosa portarsi a casa }
+  - { id: reproduce, titolo: Come rifare le prove }
+---
+import Tabella from '../../components/TabellaValidazione.astro';
+
+# Validazione
+
+Una stima del traffico che non si vede non si può confrontare con la realtà: la realtà, appunto, non si vede.
+Si può però costruire un sito finto di cui si conosce tutto, nascondere allo stimatore la parte senza consenso e controllare se la ritrova.
+
+<section id="how">
+
+## Come si verifica una stima
+
+Un generatore simula **ogni singolo visitatore**: arriva da un canale, accetta, rifiuta o ignora il banner, torna un certo numero di volte, compra oppure no. Da qui escono due cose:
+
+- un export identico a quello di GA4, con le sole visite di chi ha accettato;
+- la **risposta giusta**: il traffico totale, che lo stimatore non vede.
+
+Il generatore lavora per visitatore e lo stimatore per totali, con formule diverse: se usassero le stesse, la prova sarebbe circolare.
+Ogni scenario viene ripetuto 500 volte con dati diversi. Si misura **quante volte il valore vero cade dentro l’intervallo** dichiarato.
+
+</section>
+
+<section id="calibration">
+
+## Calibrazione: «8 volte su 10» è vero?
+
+In queste prove le ipotesi dello stimatore sono giuste in media: i comportamenti veri sono pescati dagli stessi margini che lo stimatore assume. Qui la copertura **deve** tornare: circa 80 volte su 100 per l’intervallo «probabilmente», 95 per «quasi certamente».
+Con 500 prove il margine d’errore della misura è di circa ±4 punti sul primo numero e ±2 sul secondo.
+
+<Tabella lingua="it" scenari={['A1', 'A2', 'A3', 'A4', 'A5', 'A6']} />
+
+Torna in tutti gli scenari, compresi i canali con pochissime conversioni e i tassi di consenso estremi. Il sito molto piccolo (2.000 sessioni) è al limite sulle entrate e, per singolo canale, sulle sessioni.
+
+<Tabella lingua="it" tipo="errore" scenari={['A1', 'A2', 'A3', 'A4', 'A5', 'A6']} />
+
+</section>
+
+<section id="robustness">
+
+## Robustezza: quanto costa un’ipotesi sbagliata
+
+Qui un’ipotesi è **volutamente sbagliata**. La copertura scende, ed è inevitabile: nessun intervallo protegge da un’ipotesi falsa. Lo scopo è sapere di quanto.
+
+<Tabella lingua="it" scenari={['B6', 'B7', 'B8a', 'B8b', 'B9', 'B10a', 'B10b', 'B11a', 'B11b', 'B12a', 'B12b', 'B14', 'B16a', 'B16d', 'B16b', 'B16c']} />
+
+<Tabella lingua="it" tipo="errore" scenari={['B6', 'B7', 'B8a', 'B8b', 'B9', 'B10a', 'B10b', 'B11a', 'B11b', 'B12a', 'B12b', 'B14', 'B16a', 'B16d', 'B16b', 'B16c']} />
+
+Cosa dicono queste righe:
+
+- **«Quanto converte» sbagliato** (1,0 oppure 0,15 invece di 0,4): le sessioni restano corrette, le transazioni sbagliano del 13–20% e l’intervallo contiene il vero circa una volta su tre. **Con gli ordini reali l’errore sparisce.**
+- **Consenso molto diverso tra canali**: i totali reggono, ma l’intervallo delle sessioni **del singolo canale** contiene il vero solo 30 volte su 100.
+- **Tasso dichiarato male**: «per banner» dichiarato «per visitatore» gonfia le sessioni del 19%; un tasso che esclude chi ignora il banner, dichiarato completo, le riduce del 12%. Dichiarati correttamente, la stima torna corretta e prudente.
+- **Consenso diverso tra mobile e desktop**: con differenze come quelle provate (consenso 50% su mobile e 75% su desktop, una volta e mezza le visite su desktop), con il solo tasso globale le sessioni risultano più alte di circa il 4%, anche con il tasso dichiarato preciso, ma la copertura cambia poco (76–77 su 100 invece di 79); con differenze maggiori l’errore cresce. Con i tassi per dispositivo l’errore sparisce; con un numero di visite simile tra dispositivi non c’è errore nemmeno senza.
+- **Cambio di banner non dichiarato** ed **eventi chiave irregolari**: nessun danno sui totali.
+
+</section>
+
+<section id="ad-blockers">
+
+## Ad blocker e ordini reali
+
+Con gli ordini reali il risultato dipende dalla quota di ordini che GA4 perde per cause diverse dal consenso, cioè dal tipo di pubblico indicato.
+
+<Tabella lingua="it" scenari={['B13', 'B13b', 'B15a', 'B15b', 'B15c']} />
+
+<Tabella lingua="it" tipo="errore" scenari={['B13', 'B13b', 'B15a', 'B15b', 'B15c']} />
+
+- **Quota vera 20%, risposta «misto / non lo so»**: il valore vero resta sempre dentro l’intervallo «quasi certamente», ma la stima centrale delle transazioni è alta del 14%.
+- **Quota vera 20%, risposta sbagliata «largo consumo»**: stima alta del 16% e valore vero fuori dall’intervallo due volte su tre. La risposta sul pubblico conta.
+- **Ad blocker che rifiutano più spesso e in parte nascondono il banner**: con gli ordini reali le transazioni restano corrette. Le **sessioni** risultano un po’ sotto il traffico reale (del 2% con il 12% di visitatori che bloccano GA, del 9% con il 35%): lo stimatore non stima i visitatori che GA4 non vedrebbe nemmeno con il consenso.
+
+</section>
+
+<section id="reading">
+
+## Cosa portarsi a casa
+
+1. Quando le ipotesi sono ragionevoli, gli intervalli mantengono ciò che promettono.
+2. Le **sessioni totali** sono la stima più robusta; dipendono dal tasso di accettazione e da come è misurato.
+3. **Ordini ed entrate** dipendono da un’ipotesi debole («quanto converte»): gli ordini reali la sostituiscono, ma introducono la domanda sul pubblico.
+4. Il **dettaglio per canale** va letto come indicazione, non come misura.
+
+</section>
+
+<section id="reproduce">
+
+## Come rifare le prove
+
+Generatore, scenari e risultati sono nel codice, pubblico e consultabile nel <a href="https://github.com/davidegelatti/uncounted" target="_blank" rel="noopener">repository su GitHub<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (si apre in una nuova scheda)</span></a>. Per rifare le prove scarica il repository, installa le dipendenze con `npm ci` e lancia `npm run validazione`: rifà tutto da zero (circa mezz’ora) e rigenera sia questa pagina sia il file `VALIDAZIONE.md`. Un test automatico controlla inoltre che il motore di calcolo dia sempre gli stessi numeri, cifra per cifra, a parità di dati e ipotesi.
+
+</section>
+
+<p><a class="btn primo" href="/it/stimatore/">Inizia</a></p>

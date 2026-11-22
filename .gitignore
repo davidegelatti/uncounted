@@ -1,0 +1,22 @@
+# Dipendenze scaricate da npm: si ricreano con `npm install`
+node_modules
+
+# Sito costruito e file temporanei di Astro: si ricreano con `npm run build`
+dist
+.astro
+
+# Risultati intermedi della validazione: si ricreano con `npm run validazione`
+scripts/.cache
+
+# File del sistema operativo
+.DS_Store
+
+# Impostazioni locali degli strumenti di sviluppo (contengono percorsi del mio computer)
+.claude/
+
+# Prudenza: file che possono contenere segreti o dati, da non pubblicare mai
+.env
+.env.*
+*.log
+.wrangler/
+

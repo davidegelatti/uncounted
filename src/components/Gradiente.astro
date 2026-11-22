@@ -1,0 +1,14 @@
+---
+// Sfondo animato delle superfici scure (pannello della hero, fascia finale). Solo decorazione: aria-hidden.
+// La luce viene dal basso a sinistra; «speculare» la porta in alto a destra.
+interface Props {
+  speculare?: boolean;
+}
+const { speculare = false } = Astro.props;
+---
+<div class:list={['gradiente', { speculare }]} aria-hidden="true">
+  <span class="grad-s grad-s1"></span><span class="grad-s grad-s2"></span><span class="grad-s grad-s3"></span><span class="grad-s grad-s4"></span><span class="grad-grana"></span>
+</div>
+<script>
+  import '../home/gradiente.ts';
+</script>

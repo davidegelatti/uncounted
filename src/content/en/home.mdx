@@ -1,0 +1,114 @@
+---
+---
+import Matrice from '../../components/schemi/Matrice.astro';
+import VisiteOrdini from '../../components/schemi/VisiteOrdini.astro';
+import VisitatoriVisite from '../../components/schemi/VisitatoriVisite.astro';
+import DividereNonBasta from '../../components/schemi/DividereNonBasta.astro';
+import Testo from '../../components/Testo.astro';
+import Vetrina from '../../components/Vetrina.astro';
+import Gradiente from '../../components/Gradiente.astro';
+
+<section id="promise" class="home-eroe">
+  <div class="eroe-testo">
+    <div class="eroe-corpo">
+      <p class="sopratitolo">Estimator for Google Analytics 4</p>
+      <h1>The traffic GA4 doesn’t count.</h1>
+      <p class="sottotitolo">Visitors who decline or ignore the cookie banner don’t show up in your reports. Upload an export, enter your consent rate and get an estimate of the totals, with the range of uncertainty written next to it.</p>
+      <p class="azioni"><a class="btn primo" href="/en/estimator/">Start</a><a class="btn" href="/en/estimator/#tour">See an example</a></p>
+      <ul class="prove">
+      <li><a href="/en/privacy/#verify">No data leaves your browser</a></li>
+      <li><a href="/en/method/">Public, validated method</a></li>
+      </ul>
+    </div>
+    <a class="scorri-giu" href="#how-it-works"><span class="cerchio" aria-hidden="true"></span>Scroll to see how it works</a>
+  </div>
+  <div class="eroe-pannello inverso">
+    <Gradiente />
+    <figure class="home-figura">
+      <Matrice lingua="en" />
+    </figure>
+  </div>
+</section>
+
+<section id="how-it-works" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta">How it works</p><div><h2>Three steps, nothing to install</h2><p class="lead">No account and nothing to install: everything happens in this browser page, and the file never leaves your computer.</p></div></div>
+  <ol class="passi-home">
+      <li>
+        <div class="passo-testa"><span class="passo-num"></span><span class="passo-tempo ic-prima ic-clock">≈ 3 min the first time</span></div>
+        <h3 class="ic-prima ic-file-up">Upload the export</h3>
+        <p>A CSV from a GA4 free-form exploration: sessions, key events and transactions by day and channel. <a href="/en/guide/#create-exploration">How to create it</a></p>
+        <div class="mini mini-file" aria-hidden="true"><span class="ic ic-sheet"></span><span class="mini-nome">sample-ga4-export.csv</span><span class="mini-meta">280 rows · 8 channels</span><span class="ic ic-circle-check mini-ok"></span></div>
+      </li>
+      <li>
+        <div class="passo-testa"><span class="passo-num"></span><span class="passo-tempo ic-prima ic-clock">≈ 1 min</span></div>
+        <h3 class="ic-prima ic-circle-help">Answer a few questions</h3>
+        <p>How Consent Mode is set up and what your banner’s consent rate is. “I don’t know” is a valid answer: it widens the range.</p>
+        <div class="mini mini-domanda" aria-hidden="true"><span class="mini-q">How does your CMP calculate it?</span><span class="mini-opz scelta-ok">Per visitor</span><span class="mini-opz">Per banner shown</span><span class="mini-opz">I don’t know</span></div>
+      </li>
+      <li>
+        <div class="passo-testa"><span class="passo-num"></span><span class="passo-tempo ic-prima ic-clock">a few seconds</span></div>
+        <h3 class="ic-prima ic-chart-no-axes-column">Read the estimate and refine it</h3>
+        <p>A central estimate with its range. Then you can change the assumptions, add real orders from your order system and see what changes.</p>
+        <div class="mini mini-dato" aria-hidden="true"><span class="mini-q">GA4 shows you about <b>65%</b></span><span class="mini-barra"><i class="b-oss"></i><i class="b-80"></i><i class="b-med"></i></span><span class="mini-meta">likely between 54% and 75%</span></div>
+      </li>
+  </ol>
+  <p class="azioni centro-azioni"><a class="btn primo" href="/en/estimator/">Start with your export</a><a class="btn" href="/en/estimator/#tour">Try it with sample data</a></p>
+</section>
+
+<section id="what-you-get" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta">What you get</p><div><h2>A number, how far to trust it, and where it comes from</h2><p class="lead">These are the estimator’s real results, calculated on the sample data: the same cards and charts you’ll see with your own export.</p></div></div>
+  <Vetrina lingua="en" />
+  <p class="azioni centro-azioni"><a class="btn primo" href="/en/estimator/#tour">Try it with sample data</a><a class="btn" href="/en/guide/#create-exploration">How to prepare the export</a></p>
+</section>
+
+<section id="problem" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta"><Testo lingua="en" k="risolve.etichetta" /></p><div><h2><Testo lingua="en" k="risolve.titolo" /></h2><p class="lead"><Testo lingua="en" k="risolve.lead" /></p></div></div>
+  <ol class="schede-risolve">
+    <li>
+      <div class="passo-testa"><span class="passo-num"></span></div>
+      <h3><Testo lingua="en" k="risolve.aTitolo" /></h3>
+      <VisitatoriVisite lingua="en" />
+      <p class="evidenza"><Testo lingua="en" k="risolve.aEvidenza" /></p>
+      <p><Testo lingua="en" k="risolve.aRiga" /></p>
+    </li>
+    <li>
+      <div class="passo-testa"><span class="passo-num"></span></div>
+      <h3><Testo lingua="en" k="risolve.bTitolo" /></h3>
+      <VisiteOrdini lingua="en" />
+      <p class="evidenza"><Testo lingua="en" k="risolve.bEvidenza" /></p>
+      <p><Testo lingua="en" k="risolve.bRiga" /></p>
+    </li>
+  </ol>
+  <div class="conclusione-risolve">
+    <p class="vetrina-nota"><Testo lingua="en" k="risolve.cEtichetta" /></p>
+    <h3><Testo lingua="en" k="risolve.cTitolo" /></h3>
+    <DividereNonBasta lingua="en" />
+    <p class="evidenza"><Testo lingua="en" k="risolve.cFrase" /></p>
+  </div>
+  <p class="azioni centro-azioni"><a class="btn" href="/en/method/">Explore the method</a></p>
+</section>
+
+<section id="what-it-is-not" class="home-blocco">
+  <div class="testa-blocco"><p class="etichetta">What it is not</p><div><h2>What it doesn’t do, up front</h2></div></div>
+  <ul class="schede-non">
+    <li><span class="ic-grande ic ic-scale" aria-hidden="true"></span><h3>It isn’t a measurement</h3><p>It’s an estimate that depends on stated assumptions: change them and it changes. That’s why every number comes with its range.</p></li>
+    <li><span class="ic-grande ic ic-cookie" aria-hidden="true"></span><h3>It covers consent only</h3><p>Traffic GA4 misses because of ad blockers or tracking errors isn’t included.</p></li>
+    <li><span class="ic-grande ic ic-layers" aria-hidden="true"></span><h3>It isn’t needed if GA4 is already estimating</h3><p>With Consent Mode Advanced and Google’s modeling active, the estimator notices and stops, so nothing is counted twice.</p></li>
+  </ul>
+  <p class="dopo-schede">It also assumes <strong>opt-in</strong> consent, where tracking starts only after the visitor accepts, as in the EU and the UK. Under opt-out rules, common in the United States, the missing share is usually much smaller: <a href="/en/guide/#faq">more in the Guide</a>.<br /><a href="/en/method/">How the method works</a> · <a href="/en/validation/">How it was tested</a></p>
+</section>
+
+<section id="who" class="home-sezione">
+  <div class="meta"><p class="etichetta">The author</p></div>
+  <div class="contenuto">
+    <h2>Who made it</h2>
+    <p>Uncounted is a project by <a href="https://davidegelatti.com" target="_blank" rel="noopener">Davide Gelatti, Digital Analyst<span aria-hidden="true"> ↗</span><span class="nascosto-vis"> (opens in a new tab)</span></a>. It was built with Claude, Anthropic’s AI model, in phases, with every decision approved by the author. <a href="/en/how-it-was-made/">How it was made</a></p>
+  </div>
+</section>
+
+<section id="start" class="fascia-finale inverso">
+  <Gradiente speculare />
+  <h2>How much traffic is your GA4 missing? Find out in five minutes.</h2>
+  <p class="lead">Your file stays in your browser. No export at hand? Start with the sample data.</p>
+  <p class="azioni centro-azioni"><a class="btn primo" href="/en/estimator/">Start with your export</a><a class="btn" href="/en/estimator/#tour">Try it with sample data</a></p>
+</section>
